@@ -7,7 +7,7 @@ import { AccessBadge, DifficultyBadge, ModelBadge, TagBadge } from "@/components
 import { LockedPromptBlock } from "@/components/prompts/locked-prompt-block";
 import { PromptBlock } from "@/components/prompts/prompt-block";
 import { PromptGrid } from "@/components/prompts/prompt-grid";
-import { getPromptBySlug, getPublishedPrompts, getRelatedPrompts } from "@/lib/data/prompts";
+import { getPromptBySlug, getRelatedPrompts } from "@/lib/data/prompts";
 
 type PromptPageProps = {
   params: {
@@ -16,8 +16,7 @@ type PromptPageProps = {
 };
 
 export async function generateStaticParams() {
-  const prompts = await getPublishedPrompts();
-  return prompts.map((prompt) => ({ slug: prompt.slug }));
+  return [];
 }
 
 export async function generateMetadata({ params }: PromptPageProps): Promise<Metadata> {

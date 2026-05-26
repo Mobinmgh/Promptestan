@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { notFound } from "next/navigation";
 import { PromptGrid } from "@/components/prompts/prompt-grid";
-import { getCategories, getCategoryBySlug, getPromptsByCategorySlug } from "@/lib/data/categories";
+import { getCategoryBySlug, getPromptsByCategorySlug } from "@/lib/data/categories";
 
 type CategoryPageProps = {
   params: {
@@ -12,8 +12,7 @@ type CategoryPageProps = {
 };
 
 export async function generateStaticParams() {
-  const categories = await getCategories();
-  return categories.map((category) => ({ slug: category.slug }));
+  return [];
 }
 
 export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {

@@ -17,16 +17,31 @@ function getCredentials(formData: FormData) {
     return {
       email,
       password,
-      error: "ایمیل و رمز عبور را وارد کن.",
+      error: "Enter both email and password.",
     };
   }
 
   return { email, password, error: null };
 }
 
+function normalizeAuthError(error: unknown) {
+  const message =
+    error instanceof Error
+      ? error.message
+      : typeof error === "object" && error && "message" in error
+        ? String((error as { message?: unknown }).message ?? "")
+        : String(error ?? "");
+
+  if (message.toLowerCase().includes("fetch failed")) {
+    return "Could not reach Supabase from the Next.js server. Restart dev server and check network/VPN/firewall.";
+  }
+
+  return message || "Unexpected Supabase auth error.";
+}
+
 export async function login(_state: AuthFormState, formData: FormData): Promise<AuthFormState> {
   if (!hasSupabaseEnv()) {
-    return { error: "متغیرهای محیطی Supabase تنظیم نشده‌اند." };
+    return { error: "Supabase environment variables are missing." };
   }
 
   const { email, password, error } = getCredentials(formData);
@@ -36,20 +51,33 @@ export async function login(_state: AuthFormState, formData: FormData): Promise<
   }
 
   const supabase = createClient();
-  const { data, error: authError } = await supabase.auth.signInWithPassword({ email, password });
+  let result;
 
-  if (authError || !data.user) {
-    return { error: authError?.message ?? "ورود ناموفق بود." };
+  try {
+    result = await supabase.auth.signInWithPassword({ email, password });
+  } catch (authError) {
+    return { error: normalizeAuthError(authError) };
   }
 
-  await ensureProfile(data.user);
+  const { data, error: authError } = result;
+
+  if (authError || !data.user) {
+    return { error: authError ? normalizeAuthError(authError) : "Login failed." };
+  }
+
+  try {
+    await ensureProfile(data.user);
+  } catch (profileError) {
+    return { error: normalizeAuthError(profileError) };
+  }
+
   revalidatePath("/", "layout");
   redirect("/dashboard");
 }
 
 export async function signup(_state: AuthFormState, formData: FormData): Promise<AuthFormState> {
   if (!hasSupabaseEnv()) {
-    return { error: "متغیرهای محیطی Supabase تنظیم نشده‌اند." };
+    return { error: "Supabase environment variables are missing." };
   }
 
   const { email, password, error } = getCredentials(formData);
@@ -59,13 +87,26 @@ export async function signup(_state: AuthFormState, formData: FormData): Promise
   }
 
   const supabase = createClient();
-  const { data, error: authError } = await supabase.auth.signUp({ email, password });
+  let result;
 
-  if (authError || !data.user) {
-    return { error: authError?.message ?? "ساخت حساب ناموفق بود." };
+  try {
+    result = await supabase.auth.signUp({ email, password });
+  } catch (authError) {
+    return { error: normalizeAuthError(authError) };
   }
 
-  await ensureProfile(data.user);
+  const { data, error: authError } = result;
+
+  if (authError || !data.user) {
+    return { error: authError ? normalizeAuthError(authError) : "Signup failed." };
+  }
+
+  try {
+    await ensureProfile(data.user);
+  } catch (profileError) {
+    return { error: normalizeAuthError(profileError) };
+  }
+
   revalidatePath("/", "layout");
   redirect("/dashboard");
 }
