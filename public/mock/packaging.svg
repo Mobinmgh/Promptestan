@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" role="img" aria-label="Premium packaging mockup">
+  <rect width="1200" height="750" fill="#111111"/>
+  <polygon points="430,250 650,185 820,285 590,360" fill="#4f46e5"/>
+  <polygon points="430,250 590,360 590,585 430,470" fill="#2b2b35"/>
+  <polygon points="590,360 820,285 820,510 590,585" fill="#1f1f2b"/>
+  <rect x="487" y="382" width="66" height="92" rx="8" fill="#8b5cf6" opacity=".55"/>
+  <ellipse cx="610" cy="605" rx="330" ry="62" fill="#000" opacity=".45"/>
+  <circle cx="792" cy="210" r="145" fill="#6366f1" opacity=".13"/>
+</svg>

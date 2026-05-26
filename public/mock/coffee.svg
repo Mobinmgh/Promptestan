@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" role="img" aria-label="Cinematic coffee product shot">
+  <rect width="1200" height="750" fill="#120e0b"/>
+  <rect x="0" y="520" width="1200" height="230" fill="#2a1c13"/>
+  <ellipse cx="600" cy="560" rx="245" ry="48" fill="#000" opacity=".42"/>
+  <path d="M455 260h290l-45 300H500z" fill="#d7c0a3" opacity=".9"/>
+  <path d="M475 260h250l-18 70H493z" fill="#5b331f"/>
+  <path d="M555 205c-35-55 45-65 6-125M640 205c-30-50 45-70 10-118" stroke="#f5f5f5" stroke-width="16" stroke-linecap="round" opacity=".18" fill="none"/>
+  <circle cx="805" cy="210" r="150" fill="#eab308" opacity=".12"/>
+</svg>

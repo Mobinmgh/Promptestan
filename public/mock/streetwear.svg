@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" role="img" aria-label="Streetwear editorial">
+  <rect width="1200" height="750" fill="#171717"/>
+  <rect x="0" y="500" width="1200" height="250" fill="#252525"/>
+  <rect x="510" y="210" width="175" height="330" rx="70" fill="#c2b7a3"/>
+  <circle cx="598" cy="155" r="58" fill="#b88464"/>
+  <rect x="548" y="310" width="105" height="260" rx="32" fill="#111"/>
+  <rect x="455" y="242" width="290" height="205" rx="50" fill="#74695f"/>
+  <circle cx="350" cy="210" r="130" fill="#6366f1" opacity=".14"/>
+  <circle cx="790" cy="450" r="170" fill="#8b5cf6" opacity=".12"/>
+</svg>

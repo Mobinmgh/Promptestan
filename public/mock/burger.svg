@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" role="img" aria-label="Burger advertising shot">
+  <rect width="1200" height="750" fill="#17110d"/>
+  <ellipse cx="600" cy="585" rx="360" ry="70" fill="#000" opacity=".45"/>
+  <path d="M360 355c28-112 452-112 480 0z" fill="#d6923d"/>
+  <rect x="350" y="360" width="500" height="54" rx="25" fill="#2f7d32"/>
+  <rect x="380" y="410" width="440" height="80" rx="26" fill="#5a2416"/>
+  <path d="M375 490h450c0 55-55 92-225 92s-225-37-225-92z" fill="#c98235"/>
+  <circle cx="500" cy="330" r="8" fill="#f8e0a4"/><circle cx="610" cy="315" r="8" fill="#f8e0a4"/><circle cx="710" cy="335" r="8" fill="#f8e0a4"/>
+  <circle cx="865" cy="215" r="130" fill="#eab308" opacity=".12"/>
+</svg>

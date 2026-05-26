@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" role="img" aria-label="Handmade date box">
+  <rect width="1200" height="750" fill="#15110f"/>
+  <rect x="220" y="260" width="760" height="270" rx="34" fill="#493225"/>
+  <rect x="255" y="295" width="690" height="200" rx="24" fill="#271913"/>
+  <g fill="#8b4a25"><circle cx="350" cy="375" r="54"/><circle cx="475" cy="382" r="58"/><circle cx="604" cy="368" r="55"/><circle cx="735" cy="385" r="58"/><circle cx="850" cy="370" r="54"/></g>
+  <g fill="#eab308" opacity=".35"><circle cx="377" cy="350" r="10"/><circle cx="620" cy="342" r="8"/><circle cx="820" cy="346" r="9"/></g>
+  <ellipse cx="600" cy="580" rx="420" ry="62" fill="#000" opacity=".4"/>
+  <circle cx="260" cy="170" r="150" fill="#8b5cf6" opacity=".1"/>
+</svg>

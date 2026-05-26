@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" role="img" aria-label="Corporate portrait">
+  <rect width="1200" height="750" fill="#181818"/>
+  <rect x="250" y="80" width="700" height="560" rx="40" fill="#222"/>
+  <circle cx="600" cy="235" r="92" fill="#b98163"/>
+  <path d="M430 650c18-170 322-170 340 0z" fill="#161b2b"/>
+  <path d="M515 650l85-230 85 230z" fill="#f5f5f5" opacity=".86"/>
+  <circle cx="830" cy="180" r="130" fill="#6366f1" opacity=".16"/>
+  <circle cx="390" cy="450" r="145" fill="#8b5cf6" opacity=".1"/>
+</svg>

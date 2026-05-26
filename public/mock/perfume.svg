@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" role="img" aria-label="Luxury perfume product">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#111111"/><stop offset="1" stop-color="#27213f"/></linearGradient>
+    <linearGradient id="bottle" x1="0" x2="1"><stop stop-color="#f5f5f5"/><stop offset=".5" stop-color="#8b5cf6"/><stop offset="1" stop-color="#111111"/></linearGradient>
+  </defs>
+  <rect width="1200" height="750" fill="url(#bg)"/>
+  <ellipse cx="600" cy="610" rx="310" ry="54" fill="#000" opacity=".45"/>
+  <rect x="468" y="245" width="264" height="330" rx="34" fill="url(#bottle)" opacity=".9"/>
+  <rect x="532" y="178" width="136" height="72" rx="16" fill="#d4d4d4"/>
+  <rect x="555" y="126" width="90" height="58" rx="10" fill="#6366f1"/>
+  <rect x="512" y="344" width="176" height="88" rx="18" fill="#111" opacity=".58"/>
+  <circle cx="728" cy="236" r="120" fill="#8b5cf6" opacity=".16"/>
+  <circle cx="438" cy="500" r="150" fill="#6366f1" opacity=".12"/>
+</svg>
