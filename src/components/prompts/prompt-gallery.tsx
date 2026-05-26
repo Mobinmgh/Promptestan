@@ -3,15 +3,19 @@
 import { Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { PromptGrid } from "@/components/prompts/prompt-grid";
-import { getCategories } from "@/lib/mock-prompts";
-import type { Prompt } from "@/types/prompt";
+import type { Category, Prompt } from "@/types/prompt";
 
 type FilterValue = "all" | "free" | "pro" | string;
 
-export function PromptGallery({ prompts }: { prompts: Prompt[] }) {
+export function PromptGallery({
+  prompts,
+  categories,
+}: {
+  prompts: Prompt[];
+  categories: Category[];
+}) {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<FilterValue>("all");
-  const categories = getCategories();
 
   const filters = [
     { value: "all", label: "همه" },

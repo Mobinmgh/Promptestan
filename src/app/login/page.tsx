@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { LockKeyhole } from "lucide-react";
+import { LoginForm } from "@/components/auth/login-form";
 
 export const metadata: Metadata = {
   title: "ورود",
-  description: "صفحه ورود نمایشی پرامپتستان.",
+  description: "ورود به حساب کاربری پرامپتستان.",
 };
 
 export default function LoginPage() {
@@ -24,35 +25,7 @@ export default function LoginPage() {
           </Link>
         </div>
 
-        <form className="grid gap-5 p-6 lg:p-8">
-          {/* Real authentication is intentionally deferred to the next phase. */}
-          <label className="grid gap-2 text-sm font-semibold text-text">
-            ایمیل
-            <input
-              type="email"
-              placeholder="you@example.com"
-              dir="ltr"
-              className="h-12 rounded-lg border border-border bg-background-soft px-4 text-left text-sm text-text outline-none transition placeholder:text-text-muted focus:border-accent focus:ring-2 focus:ring-accent/30"
-            />
-          </label>
-
-          <label className="grid gap-2 text-sm font-semibold text-text">
-            رمز عبور
-            <input
-              type="password"
-              placeholder="••••••••"
-              dir="ltr"
-              className="h-12 rounded-lg border border-border bg-background-soft px-4 text-left text-sm text-text outline-none transition placeholder:text-text-muted focus:border-accent focus:ring-2 focus:ring-accent/30"
-            />
-          </label>
-
-          <button
-            type="submit"
-            className="mt-2 h-12 rounded-lg bg-gradient-to-l from-accent to-accent-2 px-4 text-sm font-bold text-white shadow-glow transition hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-accent"
-          >
-            ورود
-          </button>
-        </form>
+        <LoginForm />
       </div>
     </section>
   );

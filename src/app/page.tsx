@@ -1,19 +1,13 @@
 import Link from "next/link";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import { PromptGrid } from "@/components/prompts/prompt-grid";
-import { prompts } from "@/lib/mock-prompts";
+import { getCategories } from "@/lib/data/categories";
+import { getPublishedPrompts } from "@/lib/data/prompts";
 
-const categories = [
-  "عکس محصول",
-  "تبلیغات اینستاگرام",
-  "کاتالوگ",
-  "غذا و رستوران",
-  "مد و پوشاک",
-  "برندینگ",
-];
-
-export default function HomePage() {
+export default async function HomePage() {
+  const [prompts, categories] = await Promise.all([getPublishedPrompts(), getCategories()]);
   const featuredPrompts = prompts.filter((prompt) => prompt.access === "free").slice(0, 6);
+  const heroPrompts = prompts.slice(0, 3);
 
   return (
     <>
@@ -49,40 +43,42 @@ export default function HomePage() {
 
         <div className="rounded-2xl border border-border bg-surface p-3 shadow-glow">
           <div className="grid gap-3">
-            {prompts.slice(0, 3).map((prompt) => (
-              <Link
-                key={prompt.slug}
-                href={`/prompts/${prompt.slug}`}
-                className="rounded-xl border border-border bg-background-soft p-4 transition hover:border-accent/70"
-              >
-                <div className="mb-2 flex items-center justify-between gap-3">
-                  <h2 className="font-bold text-text">{prompt.title}</h2>
-                  <span className="rounded-full bg-accent/15 px-2.5 py-1 text-xs text-indigo-100">
-                    {prompt.category}
-                  </span>
-                </div>
-                <p className="line-clamp-2 text-sm leading-7 text-text-muted">{prompt.description}</p>
-              </Link>
-            ))}
+            {heroPrompts.length > 0 ? (
+              heroPrompts.map((prompt) => (
+                <Link
+                  key={prompt.slug}
+                  href={`/prompts/${prompt.slug}`}
+                  className="rounded-xl border border-border bg-background-soft p-4 transition hover:border-accent/70"
+                >
+                  <div className="mb-2 flex items-center justify-between gap-3">
+                    <h2 className="font-bold text-text">{prompt.title}</h2>
+                    <span className="rounded-full bg-accent/15 px-2.5 py-1 text-xs text-indigo-100">
+                      {prompt.category}
+                    </span>
+                  </div>
+                  <p className="line-clamp-2 text-sm leading-7 text-text-muted">{prompt.description}</p>
+                </Link>
+              ))
+            ) : (
+              <div className="rounded-xl border border-border bg-background-soft p-6 text-sm leading-7 text-text-muted">
+                پس از اجرای داده‌های اولیه، پرامپت‌های منتخب اینجا نمایش داده می‌شوند.
+              </div>
+            )}
           </div>
         </div>
       </section>
 
       <section className="container-page py-10">
-        <div className="mb-6 flex items-end justify-between gap-4">
-          <div>
-            <h2 className="text-2xl font-black text-text">دسته‌بندی‌های پرکاربرد</h2>
-            <p className="mt-2 text-sm text-text-muted">برای خروجی‌هایی که مستقیم به فروش و محتوا کمک می‌کنند.</p>
-          </div>
+        <div className="mb-6">
+          <h2 className="text-2xl font-black text-text">دسته‌بندی‌های پرکاربرد</h2>
+          <p className="mt-2 text-sm text-text-muted">برای خروجی‌هایی که مستقیم به فروش و محتوا کمک می‌کنند.</p>
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {categories.map((category) => (
-            <div key={category} className="rounded-xl border border-border bg-surface p-5">
-              <h3 className="font-bold text-text">{category}</h3>
-              <p className="mt-2 text-sm leading-7 text-text-muted">
-                پرامپت‌های آماده برای ساخت تصویر حرفه‌ای در این کاربرد.
-              </p>
-            </div>
+          {categories.slice(0, 6).map((category) => (
+            <Link key={category.slug} href={`/categories/${category.slug}`} className="rounded-xl border border-border bg-surface p-5 transition hover:border-accent/70">
+              <h3 className="font-bold text-text">{category.name}</h3>
+              <p className="mt-2 text-sm leading-7 text-text-muted">{category.description}</p>
+            </Link>
           ))}
         </div>
       </section>
@@ -97,7 +93,7 @@ export default function HomePage() {
             مشاهده همه
           </Link>
         </div>
-        <PromptGrid prompts={featuredPrompts} />
+        {featuredPrompts.length > 0 ? <PromptGrid prompts={featuredPrompts} /> : null}
       </section>
 
       <section className="container-page py-10">
@@ -131,15 +127,6 @@ export default function HomePage() {
               <h3 className="font-bold text-text">{step}</h3>
             </div>
           ))}
-        </div>
-      </section>
-
-      <section className="container-page py-10">
-        <div className="rounded-2xl border border-border bg-surface p-6 text-center md:p-10">
-          <h2 className="text-2xl font-black text-text">۲۵ پرامپت رایگان عکس محصول را دریافت کن</h2>
-          <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-text-muted">
-            نسخه اولیه پرامپتستان با داده نمونه ساخته شده است؛ در فاز بعدی اتصال واقعی و عضویت اضافه می‌شود.
-          </p>
         </div>
       </section>
     </>

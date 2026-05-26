@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
 import { PromptGallery } from "@/components/prompts/prompt-gallery";
-import { prompts } from "@/lib/mock-prompts";
+import { getCategories } from "@/lib/data/categories";
+import { getPublishedPrompts } from "@/lib/data/prompts";
 
 export const metadata: Metadata = {
   title: "گالری پرامپت‌های تصویری",
   description: "پرامپت‌های آماده برای ساخت عکس محصول، تبلیغ، کاتالوگ، استوری و تصاویر حرفه‌ای با هوش مصنوعی.",
 };
 
-export default function PromptsPage() {
+export default async function PromptsPage() {
+  const [prompts, categories] = await Promise.all([getPublishedPrompts(), getCategories()]);
+
   return (
     <section className="container-page py-10 md:py-14">
       <div className="mx-auto mb-9 max-w-3xl text-center">
@@ -22,7 +25,7 @@ export default function PromptsPage() {
         </p>
       </div>
 
-      <PromptGallery prompts={prompts} />
+      <PromptGallery prompts={prompts} categories={categories} />
     </section>
   );
 }

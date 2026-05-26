@@ -3,7 +3,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { notFound } from "next/navigation";
 import { PromptGrid } from "@/components/prompts/prompt-grid";
-import { getCategories, getCategoryBySlug, getPromptsByCategorySlug } from "@/lib/mock-prompts";
+import { getCategories, getCategoryBySlug, getPromptsByCategorySlug } from "@/lib/data/categories";
 
 type CategoryPageProps = {
   params: {
@@ -11,12 +11,13 @@ type CategoryPageProps = {
   };
 };
 
-export function generateStaticParams() {
-  return getCategories().map((category) => ({ slug: category.slug }));
+export async function generateStaticParams() {
+  const categories = await getCategories();
+  return categories.map((category) => ({ slug: category.slug }));
 }
 
-export function generateMetadata({ params }: CategoryPageProps): Metadata {
-  const category = getCategoryBySlug(params.slug);
+export async function generateMetadata({ params }: CategoryPageProps): Promise<Metadata> {
+  const category = await getCategoryBySlug(params.slug);
 
   if (!category) {
     return {
@@ -30,14 +31,14 @@ export function generateMetadata({ params }: CategoryPageProps): Metadata {
   };
 }
 
-export default function CategoryDetailPage({ params }: CategoryPageProps) {
-  const category = getCategoryBySlug(params.slug);
+export default async function CategoryDetailPage({ params }: CategoryPageProps) {
+  const category = await getCategoryBySlug(params.slug);
 
   if (!category) {
     notFound();
   }
 
-  const categoryPrompts = getPromptsByCategorySlug(params.slug);
+  const categoryPrompts = await getPromptsByCategorySlug(params.slug);
 
   return (
     <section className="container-page py-8 md:py-12">

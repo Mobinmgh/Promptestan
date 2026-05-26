@@ -7,7 +7,7 @@ import { AccessBadge, DifficultyBadge, ModelBadge, TagBadge } from "@/components
 import { LockedPromptBlock } from "@/components/prompts/locked-prompt-block";
 import { PromptBlock } from "@/components/prompts/prompt-block";
 import { PromptGrid } from "@/components/prompts/prompt-grid";
-import { getPromptBySlug, getRelatedPrompts, prompts } from "@/lib/mock-prompts";
+import { getPromptBySlug, getPublishedPrompts, getRelatedPrompts } from "@/lib/data/prompts";
 
 type PromptPageProps = {
   params: {
@@ -15,12 +15,13 @@ type PromptPageProps = {
   };
 };
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const prompts = await getPublishedPrompts();
   return prompts.map((prompt) => ({ slug: prompt.slug }));
 }
 
-export function generateMetadata({ params }: PromptPageProps): Metadata {
-  const prompt = getPromptBySlug(params.slug);
+export async function generateMetadata({ params }: PromptPageProps): Promise<Metadata> {
+  const prompt = await getPromptBySlug(params.slug);
 
   if (!prompt) {
     return {
@@ -34,14 +35,15 @@ export function generateMetadata({ params }: PromptPageProps): Metadata {
   };
 }
 
-export default function PromptDetailPage({ params }: PromptPageProps) {
-  const prompt = getPromptBySlug(params.slug);
+export default async function PromptDetailPage({ params }: PromptPageProps) {
+  const prompt = await getPromptBySlug(params.slug);
 
   if (!prompt) {
     notFound();
   }
 
-  const relatedPrompts = getRelatedPrompts(prompt.slug);
+  const relatedPrompts = await getRelatedPrompts(prompt.slug);
+  const isLocked = prompt.access === "pro";
 
   return (
     <section className="container-page py-8 md:py-12">
@@ -76,13 +78,13 @@ export default function PromptDetailPage({ params }: PromptPageProps) {
             ))}
           </div>
 
-          {prompt.access === "pro" ? (
-            <LockedPromptBlock preview={`${prompt.promptText.slice(0, 180)}...`} />
+          {isLocked ? (
+            <LockedPromptBlock preview={prompt.promptPreview ?? ""} />
           ) : (
-            <PromptBlock title="متن پرامپت" text={prompt.promptText} />
+            <PromptBlock title="متن پرامپت" text={prompt.promptText ?? ""} />
           )}
 
-          {prompt.access === "free" && prompt.negativePrompt ? (
+          {!isLocked && prompt.negativePrompt ? (
             <PromptBlock title="پرامپت منفی" text={prompt.negativePrompt} />
           ) : null}
 
