@@ -33,7 +33,7 @@ body {
     radial-gradient(circle at top right, rgba(99, 102, 241, 0.11), transparent 34rem),
     var(--background);
   color: var(--text);
-  font-family: Vazirmatn, Inter, system-ui, sans-serif;
+  font-family: var(--font-vazirmatn), Vazirmatn, Inter, system-ui, sans-serif;
   text-align: right;
 }
 

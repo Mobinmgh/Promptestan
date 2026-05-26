@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { notFound } from "next/navigation";
 import { AccessBadge, DifficultyBadge, ModelBadge, TagBadge } from "@/components/prompts/badges";
+import { LockedPromptBlock } from "@/components/prompts/locked-prompt-block";
 import { PromptBlock } from "@/components/prompts/prompt-block";
 import { PromptGrid } from "@/components/prompts/prompt-grid";
 import { getPromptBySlug, getRelatedPrompts, prompts } from "@/lib/mock-prompts";
@@ -75,9 +76,13 @@ export default function PromptDetailPage({ params }: PromptPageProps) {
             ))}
           </div>
 
-          <PromptBlock title="متن پرامپت" text={prompt.promptText} />
+          {prompt.access === "pro" ? (
+            <LockedPromptBlock preview={`${prompt.promptText.slice(0, 180)}...`} />
+          ) : (
+            <PromptBlock title="متن پرامپت" text={prompt.promptText} />
+          )}
 
-          {prompt.negativePrompt ? (
+          {prompt.access === "free" && prompt.negativePrompt ? (
             <PromptBlock title="پرامپت منفی" text={prompt.negativePrompt} />
           ) : null}
 

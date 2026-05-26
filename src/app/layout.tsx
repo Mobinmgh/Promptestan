@@ -1,7 +1,40 @@
 import type { Metadata } from "next";
+import localFont from "next/font/local";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import "./globals.css";
+
+const vazirmatn = localFont({
+  variable: "--font-vazirmatn",
+  display: "swap",
+  src: [
+    {
+      path: "../assets/fonts/vazirmatn/Vazirmatn-Regular.ttf",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../assets/fonts/vazirmatn/Vazirmatn-Medium.ttf",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "../assets/fonts/vazirmatn/Vazirmatn-SemiBold.ttf",
+      weight: "600",
+      style: "normal",
+    },
+    {
+      path: "../assets/fonts/vazirmatn/Vazirmatn-Bold.ttf",
+      weight: "700",
+      style: "normal",
+    },
+    {
+      path: "../assets/fonts/vazirmatn/Vazirmatn-Black.ttf",
+      weight: "900",
+      style: "normal",
+    },
+  ],
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://promptestan.com"),
@@ -20,7 +53,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fa" dir="rtl">
-      <body>
+      <body className={vazirmatn.variable}>
         <SiteHeader />
         <main>{children}</main>
         <SiteFooter />

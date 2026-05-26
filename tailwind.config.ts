@@ -28,7 +28,7 @@ const config: Config = {
         glow: "0 20px 60px rgba(99, 102, 241, 0.18)",
       },
       fontFamily: {
-        sans: ["Vazirmatn", "Inter", "system-ui", "sans-serif"],
+        sans: ["var(--font-vazirmatn)", "Vazirmatn", "Inter", "system-ui", "sans-serif"],
       },
     },
   },

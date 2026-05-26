@@ -1,5 +1,12 @@
 import type { Prompt } from "@/types/prompt";
 
+export type MockCategory = {
+  name: string;
+  slug: string;
+  description: string;
+  count: number;
+};
+
 export const prompts: Prompt[] = [
   {
     slug: "luxury-perfume-product-photo",
@@ -297,4 +304,45 @@ export function getRelatedPrompts(currentSlug: string) {
     .filter((prompt) => prompt.slug !== currentSlug && prompt.category === current.category)
     .concat(prompts.filter((prompt) => prompt.slug !== currentSlug && prompt.category !== current.category))
     .slice(0, 3);
+}
+
+export const categorySlugs: Record<string, string> = {
+  "عکس محصول": "product-photography",
+  "غذا و رستوران": "food-restaurant",
+  "تبلیغات اینستاگرام": "instagram-ads",
+  "مد و پوشاک": "fashion",
+  "پس‌زمینه پست و استوری": "story-backgrounds",
+  "بسته‌بندی": "packaging",
+  "پرتره حرفه‌ای": "professional-portrait",
+  "تصاویر لوکس": "luxury-visuals",
+  "برندینگ": "branding",
+};
+
+export function getCategorySlug(categoryName: string) {
+  return categorySlugs[categoryName] ?? categoryName.toLowerCase().replace(/\s+/g, "-");
+}
+
+export function getCategories(): MockCategory[] {
+  const categoryNames = Array.from(new Set(prompts.map((prompt) => prompt.category)));
+
+  return categoryNames.map((name) => ({
+    name,
+    slug: getCategorySlug(name),
+    count: prompts.filter((prompt) => prompt.category === name).length,
+    description: `پرامپت‌های آماده برای ساخت تصاویر حرفه‌ای در حوزه ${name}.`,
+  }));
+}
+
+export function getCategoryBySlug(slug: string) {
+  return getCategories().find((category) => category.slug === slug);
+}
+
+export function getPromptsByCategorySlug(slug: string) {
+  const category = getCategoryBySlug(slug);
+
+  if (!category) {
+    return [];
+  }
+
+  return prompts.filter((prompt) => prompt.category === category.name);
 }
