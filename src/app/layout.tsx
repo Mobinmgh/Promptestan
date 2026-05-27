@@ -45,9 +45,12 @@ export const metadata: Metadata = {
   description:
     "پرامپتستان گالری پرامپت‌های آماده و تست‌شده برای ساخت تصاویر حرفه‌ای با هوش مصنوعی است.",
   icons: {
-    icon: "/brand/logo-mark.svg",
-    shortcut: "/brand/logo-mark.svg",
-    apple: "/brand/logo-mark.svg",
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/brand/logo-mark.svg", type: "image/svg+xml" },
+    ],
+    shortcut: "/favicon.svg",
+    apple: "/apple-icon.svg",
   },
   openGraph: {
     title: "Promptestan | پرامپتستان",
