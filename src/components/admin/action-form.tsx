@@ -27,7 +27,7 @@ export function ActionForm({
   children,
   className,
 }: {
-  action: (state: State, formData: FormData) => Promise<State | void>;
+  action: (state: State, formData: FormData) => Promise<State>;
   submitLabel: string;
   children: ReactNode;
   className?: string;
