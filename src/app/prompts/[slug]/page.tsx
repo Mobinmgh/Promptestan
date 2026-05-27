@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { notFound } from "next/navigation";
@@ -113,24 +112,30 @@ export default async function PromptDetailPage({ params }: PromptPageProps) {
 
           <section className="rounded-xl border border-border bg-surface p-5">
             <h2 className="mb-4 text-lg font-bold text-text">متغیرها</h2>
-            <div className="grid gap-3">
-              {prompt.variables.map((variable) => (
-                <div
-                  key={variable.key}
-                  className="grid gap-2 rounded-lg border border-border bg-background-soft p-3 text-sm md:grid-cols-[9rem_1fr]"
-                >
-                  <div>
-                    <span className="font-semibold text-text">{variable.labelFa}</span>
-                    <span dir="ltr" className="mt-1 block text-left text-xs text-text-muted">
-                      {`{${variable.key}}`}
+            {prompt.variables.length > 0 ? (
+              <div className="grid gap-3">
+                {prompt.variables.map((variable) => (
+                  <div
+                    key={variable.key}
+                    className="grid gap-2 rounded-lg border border-border bg-background-soft p-3 text-sm md:grid-cols-[9rem_1fr]"
+                  >
+                    <div>
+                      <span className="font-semibold text-text">{variable.labelFa}</span>
+                      <span dir="ltr" className="mt-1 block text-left text-xs text-text-muted">
+                        {`{${variable.key}}`}
+                      </span>
+                    </div>
+                    <span dir="ltr" className="prompt-text text-left text-text-soft">
+                      {variable.example}
                     </span>
                   </div>
-                  <span dir="ltr" className="prompt-text text-left text-text-soft">
-                    {variable.example}
-                  </span>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <p className="rounded-lg border border-border bg-background-soft p-3 text-sm text-text-muted">
+                برای این پرامپت متغیری ثبت نشده است.
+              </p>
+            )}
           </section>
 
           <section className="rounded-xl border border-border bg-surface p-5">
@@ -138,26 +143,29 @@ export default async function PromptDetailPage({ params }: PromptPageProps) {
             <p className="mb-4 rounded-lg border border-accent/25 bg-accent/10 p-3 text-sm leading-7 text-indigo-100">
               بهترین کاربرد: {prompt.bestFor}
             </p>
-            <ul className="grid gap-3 text-sm leading-7 text-text-muted">
-              {prompt.usageGuide.map((item) => (
-                <li key={item} className="rounded-lg border border-border bg-background-soft p-3">
-                  {item}
-                </li>
-              ))}
-            </ul>
+            {prompt.usageGuide.length > 0 ? (
+              <ul className="grid gap-3 text-sm leading-7 text-text-muted">
+                {prompt.usageGuide.map((item) => (
+                  <li key={item} className="rounded-lg border border-border bg-background-soft p-3">
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="rounded-lg border border-border bg-background-soft p-3 text-sm text-text-muted">
+                راهنمای استفاده برای این پرامپت هنوز ثبت نشده است.
+              </p>
+            )}
           </section>
         </article>
 
         <aside className="order-1 lg:sticky lg:top-24 lg:order-2">
           <div className="overflow-hidden rounded-2xl border border-border bg-surface p-3 shadow-glow">
             <div className="relative aspect-[4/5] overflow-hidden rounded-xl bg-background-soft">
-              <Image
+              <img
                 src={prompt.coverImage}
                 alt={prompt.imageAlt}
-                fill
-                priority
-                className="object-cover"
-                sizes="(min-width: 1024px) 42vw, 100vw"
+                className="h-full w-full object-cover"
               />
             </div>
           </div>
