@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { LogOut, Menu, X } from "lucide-react";
 import { useState } from "react";
 import { logout } from "@/app/login/actions";
+import { BrandLogo } from "@/components/layout/brand-logo";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -57,11 +58,8 @@ export function HeaderNav({ userEmail, isAdmin }: { userEmail: string | null; is
     <header className="sticky top-0 z-50 border-b border-border bg-background/92 backdrop-blur-xl">
       <div className="container-page flex h-16 items-center justify-between gap-4">
         <div className="flex items-center gap-8">
-          <Link href="/" className="group flex items-center gap-3" aria-label="پرامپتستان">
-            <span className="grid h-9 w-9 place-items-center rounded-lg border border-accent/45 bg-accent/15 text-sm font-black text-white shadow-glow">
-              پ
-            </span>
-            <span className="text-lg font-bold text-text">پرامپتستان</span>
+          <Link href="/" aria-label="پرامپتستان">
+            <BrandLogo />
           </Link>
 
           <nav className="hidden items-center gap-1 md:flex" aria-label="ناوبری اصلی">
