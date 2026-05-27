@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { PromptGallery } from "@/components/prompts/prompt-gallery";
+import { getViewerState } from "@/lib/auth/access";
 import { getCategories } from "@/lib/data/categories";
+import { getUserFavoritePromptIds } from "@/lib/data/favorites";
 import { getPublishedPrompts } from "@/lib/data/prompts";
 
 export const metadata: Metadata = {
@@ -9,7 +11,12 @@ export const metadata: Metadata = {
 };
 
 export default async function PromptsPage() {
-  const [prompts, categories] = await Promise.all([getPublishedPrompts(), getCategories()]);
+  const viewer = await getViewerState();
+  const [prompts, categories, savedPromptIds] = await Promise.all([
+    getPublishedPrompts(),
+    getCategories(),
+    viewer.user ? getUserFavoritePromptIds(viewer.user.id) : Promise.resolve([]),
+  ]);
 
   return (
     <section className="container-page py-10 md:py-14">
@@ -25,7 +32,12 @@ export default async function PromptsPage() {
         </p>
       </div>
 
-      <PromptGallery prompts={prompts} categories={categories} />
+      <PromptGallery
+        prompts={prompts}
+        categories={categories}
+        isLoggedIn={Boolean(viewer.user)}
+        savedPromptIds={savedPromptIds}
+      />
     </section>
   );
 }

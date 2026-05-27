@@ -14,17 +14,44 @@ const navItems = [
   { href: "/pricing", label: "قیمت‌گذاری" },
 ];
 
-export function HeaderNav({ userEmail }: { userEmail: string | null }) {
+export function HeaderNav({ userEmail, isAdmin }: { userEmail: string | null; isAdmin: boolean }) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
   function isActive(href: string) {
-    if (href === "/") {
-      return pathname === "/";
-    }
-
+    if (href === "/") return pathname === "/";
     return pathname === href || pathname.startsWith(`${href}/`);
   }
+
+  const loggedInLinks = (
+    <>
+      <Link
+        href="/dashboard"
+        onClick={() => setIsOpen(false)}
+        className="rounded-lg px-3 py-2 text-sm font-medium text-text-muted transition hover:text-text focus:outline-none focus:ring-2 focus:ring-accent"
+      >
+        داشبورد
+      </Link>
+      {isAdmin ? (
+        <Link
+          href="/admin"
+          onClick={() => setIsOpen(false)}
+          className="rounded-lg px-3 py-2 text-sm font-medium text-indigo-100 transition hover:text-text focus:outline-none focus:ring-2 focus:ring-accent"
+        >
+          مدیریت
+        </Link>
+      ) : null}
+      <form action={logout}>
+        <button
+          type="submit"
+          className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-3 py-2 text-sm font-semibold text-text-muted transition hover:border-accent/70 hover:text-text"
+        >
+          <LogOut size={16} />
+          خروج
+        </button>
+      </form>
+    </>
+  );
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/92 backdrop-blur-xl">
@@ -55,35 +82,13 @@ export function HeaderNav({ userEmail }: { userEmail: string | null }) {
 
         <div className="hidden items-center gap-3 md:flex">
           {userEmail ? (
-            <>
-              <Link
-                href="/dashboard"
-                className="rounded-lg px-3 py-2 text-sm font-medium text-text-muted transition hover:text-text focus:outline-none focus:ring-2 focus:ring-accent"
-              >
-                داشبورد
-              </Link>
-              <form action={logout}>
-                <button
-                  type="submit"
-                  className="inline-flex items-center gap-2 rounded-lg border border-border bg-surface px-3 py-2 text-sm font-semibold text-text-muted transition hover:border-accent/70 hover:text-text"
-                >
-                  <LogOut size={16} />
-                  خروج
-                </button>
-              </form>
-            </>
+            loggedInLinks
           ) : (
             <>
-              <Link
-                href="/login"
-                className="rounded-lg px-3 py-2 text-sm font-medium text-text-muted transition hover:text-text focus:outline-none focus:ring-2 focus:ring-accent"
-              >
+              <Link href="/login" className="rounded-lg px-3 py-2 text-sm font-medium text-text-muted transition hover:text-text focus:outline-none focus:ring-2 focus:ring-accent">
                 ورود
               </Link>
-              <Link
-                href="/prompts"
-                className="rounded-lg bg-gradient-to-l from-accent to-accent-2 px-4 py-2 text-sm font-semibold text-white shadow-glow transition hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-accent"
-              >
+              <Link href="/prompts" className="rounded-lg bg-gradient-to-l from-accent to-accent-2 px-4 py-2 text-sm font-semibold text-white shadow-glow transition hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-accent">
                 شروع کن
               </Link>
             </>
@@ -117,42 +122,18 @@ export function HeaderNav({ userEmail }: { userEmail: string | null }) {
                 {item.label}
               </Link>
             ))}
-            <div className="mt-2 grid grid-cols-2 gap-2">
+            <div className="mt-2 grid gap-2">
               {userEmail ? (
-                <>
-                  <Link
-                    href="/dashboard"
-                    onClick={() => setIsOpen(false)}
-                    className="rounded-lg border border-border bg-surface px-3 py-3 text-center text-sm font-semibold text-text-muted"
-                  >
-                    داشبورد
-                  </Link>
-                  <form action={logout}>
-                    <button
-                      type="submit"
-                      className="w-full rounded-lg border border-border bg-surface px-3 py-3 text-center text-sm font-semibold text-text-muted"
-                    >
-                      خروج
-                    </button>
-                  </form>
-                </>
+                <div className="grid gap-2">{loggedInLinks}</div>
               ) : (
-                <>
-                  <Link
-                    href="/login"
-                    onClick={() => setIsOpen(false)}
-                    className="rounded-lg border border-border bg-surface px-3 py-3 text-center text-sm font-semibold text-text-muted"
-                  >
+                <div className="grid grid-cols-2 gap-2">
+                  <Link href="/login" onClick={() => setIsOpen(false)} className="rounded-lg border border-border bg-surface px-3 py-3 text-center text-sm font-semibold text-text-muted">
                     ورود
                   </Link>
-                  <Link
-                    href="/prompts"
-                    onClick={() => setIsOpen(false)}
-                    className="rounded-lg bg-gradient-to-l from-accent to-accent-2 px-3 py-3 text-center text-sm font-semibold text-white"
-                  >
+                  <Link href="/prompts" onClick={() => setIsOpen(false)} className="rounded-lg bg-gradient-to-l from-accent to-accent-2 px-3 py-3 text-center text-sm font-semibold text-white">
                     شروع کن
                   </Link>
-                </>
+                </div>
               )}
             </div>
           </nav>

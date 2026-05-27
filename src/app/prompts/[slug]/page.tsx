@@ -4,9 +4,12 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { notFound } from "next/navigation";
 import { AccessBadge, DifficultyBadge, ModelBadge, TagBadge } from "@/components/prompts/badges";
+import { FavoriteButton } from "@/components/prompts/favorite-button";
 import { LockedPromptBlock } from "@/components/prompts/locked-prompt-block";
 import { PromptBlock } from "@/components/prompts/prompt-block";
 import { PromptGrid } from "@/components/prompts/prompt-grid";
+import { getViewerState } from "@/lib/auth/access";
+import { isPromptSaved, getUserFavoritePromptIds } from "@/lib/data/favorites";
 import { getPromptBySlug, getRelatedPrompts } from "@/lib/data/prompts";
 
 type PromptPageProps = {
@@ -35,14 +38,19 @@ export async function generateMetadata({ params }: PromptPageProps): Promise<Met
 }
 
 export default async function PromptDetailPage({ params }: PromptPageProps) {
+  const viewer = await getViewerState();
   const prompt = await getPromptBySlug(params.slug);
 
   if (!prompt) {
     notFound();
   }
 
-  const relatedPrompts = await getRelatedPrompts(prompt.slug);
-  const isLocked = prompt.access === "pro";
+  const [relatedPrompts, saved, savedPromptIds] = await Promise.all([
+    getRelatedPrompts(prompt.slug),
+    viewer.user && prompt.id ? isPromptSaved(viewer.user.id, prompt.id) : Promise.resolve(false),
+    viewer.user ? getUserFavoritePromptIds(viewer.user.id) : Promise.resolve([]),
+  ]);
+  const isLocked = prompt.access === "pro" && !viewer.canViewPro;
 
   return (
     <section className="container-page py-8 md:py-12">
@@ -66,6 +74,14 @@ export default async function PromptDetailPage({ params }: PromptPageProps) {
             </div>
             <h1 className="text-3xl font-black leading-tight text-text md:text-4xl">{prompt.title}</h1>
             <p className="mt-4 text-sm leading-8 text-text-muted md:text-base">{prompt.description}</p>
+            <div className="mt-5">
+              <FavoriteButton
+                promptId={prompt.id}
+                slug={prompt.slug}
+                isLoggedIn={Boolean(viewer.user)}
+                isSaved={saved}
+              />
+            </div>
           </div>
 
           <div className="flex flex-wrap gap-2">
@@ -145,7 +161,7 @@ export default async function PromptDetailPage({ params }: PromptPageProps) {
           <h2 className="text-2xl font-black text-text">پرامپت‌های مرتبط</h2>
           <p className="mt-2 text-sm text-text-muted">چند گزینه نزدیک برای ادامه ساخت تصویر.</p>
         </div>
-        <PromptGrid prompts={relatedPrompts} />
+        <PromptGrid prompts={relatedPrompts} isLoggedIn={Boolean(viewer.user)} savedPromptIds={savedPromptIds} />
       </section>
     </section>
   );

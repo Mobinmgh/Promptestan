@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { deletePrompt, togglePromptPublished } from "@/app/admin/actions";
+import { ConfirmSubmitButton } from "@/components/admin/confirm-submit-button";
 import { accessLabels, difficultyLabels } from "@/lib/admin/constants";
 import { requireAdmin } from "@/lib/auth/admin";
 
@@ -21,17 +22,9 @@ export default async function AdminPromptsPage({ searchParams }: PageProps) {
     .select("id,title,slug,access_level,difficulty,is_published,updated_at,category_id,categories(name_fa,slug)")
     .order("updated_at", { ascending: false });
 
-  if (q) {
-    query = query.or(`title.ilike.%${q}%,slug.ilike.%${q}%`);
-  }
-
-  if (access !== "all") {
-    query = query.eq("access_level", access);
-  }
-
-  if (published !== "all") {
-    query = query.eq("is_published", published === "published");
-  }
+  if (q) query = query.or(`title.ilike.%${q}%,slug.ilike.%${q}%`);
+  if (access !== "all") query = query.eq("access_level", access);
+  if (published !== "all") query = query.eq("is_published", published === "published");
 
   const { data: prompts } = await query;
 
@@ -103,9 +96,9 @@ export default async function AdminPromptsPage({ searchParams }: PageProps) {
                       <input type="hidden" name="id" value={prompt.id} />
                       <input type="hidden" name="slug" value={prompt.slug} />
                       <input type="hidden" name="category_id" value={prompt.category_id ?? ""} />
-                      <button className="rounded-lg border border-danger/40 px-3 py-1.5 text-xs font-bold text-red-200">
+                      <ConfirmSubmitButton className="rounded-lg border border-danger/40 px-3 py-1.5 text-xs font-bold text-red-200">
                         حذف
-                      </button>
+                      </ConfirmSubmitButton>
                     </form>
                   </div>
                 </td>

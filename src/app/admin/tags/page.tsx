@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { createTag, deleteTag } from "@/app/admin/actions";
+import { ConfirmSubmitButton } from "@/components/admin/confirm-submit-button";
 import { TagForm } from "@/components/admin/tag-form";
 import { requireAdmin } from "@/lib/auth/admin";
 
 export default async function AdminTagsPage() {
   const { supabase } = await requireAdmin();
-  const { data: tags } = await supabase.from("tags").select("id,name,slug").order("name");
+  const { data: tags } = await (supabase.from("tags") as any).select("id,name,slug").order("name");
 
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_24rem] lg:items-start">
@@ -32,9 +33,9 @@ export default async function AdminTagsPage() {
                       </Link>
                       <form action={deleteTag}>
                         <input type="hidden" name="id" value={tag.id} />
-                        <button className="rounded-lg border border-danger/40 px-3 py-1.5 text-xs font-bold text-red-200">
+                        <ConfirmSubmitButton className="rounded-lg border border-danger/40 px-3 py-1.5 text-xs font-bold text-red-200">
                           حذف
-                        </button>
+                        </ConfirmSubmitButton>
                       </form>
                     </div>
                   </td>

@@ -2,39 +2,49 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Prompt } from "@/types/prompt";
 import { AccessBadge, DifficultyBadge, ModelBadge, TagBadge } from "./badges";
+import { FavoriteButton } from "./favorite-button";
 
-export function PromptCard({ prompt }: { prompt: Prompt }) {
+export function PromptCard({
+  prompt,
+  isLoggedIn = false,
+  isSaved = false,
+}: {
+  prompt: Prompt;
+  isLoggedIn?: boolean;
+  isSaved?: boolean;
+}) {
   return (
-    <Link
-      href={`/prompts/${prompt.slug}`}
-      className="group overflow-hidden rounded-xl border border-border bg-surface transition duration-200 hover:-translate-y-1 hover:border-accent/80 hover:shadow-glow focus:outline-none focus:ring-2 focus:ring-accent"
-    >
-      <div className="relative aspect-[16/10] overflow-hidden bg-background-soft">
-        <Image
-          src={prompt.coverImage}
-          alt={prompt.imageAlt}
-          fill
-          className="object-cover transition duration-300 group-hover:scale-105"
-          sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-        />
-        <div className="absolute right-3 top-3 flex gap-2">
-          <AccessBadge access={prompt.access} />
-        </div>
-      </div>
-
-      <div className="grid min-h-64 gap-4 p-5">
-        <div>
-          <div className="mb-3 flex flex-wrap items-center gap-2">
-            <span className="rounded-full border border-accent/30 bg-accent/10 px-2.5 py-1 text-xs text-indigo-100">
-              {prompt.category}
-            </span>
-            <DifficultyBadge difficulty={prompt.difficulty} />
+    <article className="group overflow-hidden rounded-xl border border-border bg-surface transition duration-200 hover:-translate-y-1 hover:border-accent/80 hover:shadow-glow">
+      <Link href={`/prompts/${prompt.slug}`} className="block focus:outline-none focus:ring-2 focus:ring-accent">
+        <div className="relative aspect-[16/10] overflow-hidden bg-background-soft">
+          <Image
+            src={prompt.coverImage}
+            alt={prompt.imageAlt}
+            fill
+            className="object-cover transition duration-300 group-hover:scale-105"
+            sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+          />
+          <div className="absolute right-3 top-3 flex gap-2">
+            <AccessBadge access={prompt.access} />
           </div>
-          <h2 className="mb-2 text-lg font-bold text-text">{prompt.title}</h2>
-          <p className="line-clamp-3 text-sm leading-7 text-text-muted">{prompt.description}</p>
         </div>
 
-        <div className="mt-auto flex flex-wrap gap-2">
+        <div className="grid gap-4 p-5 pb-3">
+          <div>
+            <div className="mb-3 flex flex-wrap items-center gap-2">
+              <span className="rounded-full border border-accent/30 bg-accent/10 px-2.5 py-1 text-xs text-indigo-100">
+                {prompt.category}
+              </span>
+              <DifficultyBadge difficulty={prompt.difficulty} />
+            </div>
+            <h2 className="mb-2 text-lg font-bold text-text">{prompt.title}</h2>
+            <p className="line-clamp-3 text-sm leading-7 text-text-muted">{prompt.description}</p>
+          </div>
+        </div>
+      </Link>
+
+      <div className="grid gap-4 p-5 pt-1">
+        <div className="flex flex-wrap gap-2">
           {prompt.models.slice(0, 2).map((model) => (
             <ModelBadge key={model} model={model} />
           ))}
@@ -42,7 +52,8 @@ export function PromptCard({ prompt }: { prompt: Prompt }) {
             <TagBadge key={tag} tag={tag} />
           ))}
         </div>
+        <FavoriteButton promptId={prompt.id} slug={prompt.slug} isLoggedIn={isLoggedIn} isSaved={isSaved} />
       </div>
-    </Link>
+    </article>
   );
 }

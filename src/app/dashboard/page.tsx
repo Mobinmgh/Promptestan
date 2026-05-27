@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { redirect } from "next/navigation";
+import { PromptGrid } from "@/components/prompts/prompt-grid";
 import { ensureProfile } from "@/lib/auth/profile";
+import { getSavedPromptsForUser, getUserFavoritePromptIds } from "@/lib/data/favorites";
 import { createClient, hasSupabaseEnv } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
@@ -26,11 +29,14 @@ export default async function DashboardPage() {
 
   await ensureProfile(user);
 
-  const { data: profileRow } = await supabase
-    .from("profiles")
-    .select("email, subscription_status")
-    .eq("id", user.id)
-    .maybeSingle();
+  const [{ data: profileRow }, savedPrompts, savedPromptIds] = await Promise.all([
+    (supabase.from("profiles") as any)
+      .select("email, subscription_status")
+      .eq("id", user.id)
+      .maybeSingle(),
+    getSavedPromptsForUser(user.id),
+    getUserFavoritePromptIds(user.id),
+  ]);
   const profile = profileRow as { email: string | null; subscription_status: "free" | "pro" } | null;
 
   return (
@@ -53,11 +59,28 @@ export default async function DashboardPage() {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-border bg-surface p-8 text-center">
-        <h2 className="text-xl font-black text-text">پرامپت‌های ذخیره‌شده</h2>
-        <p className="mx-auto mt-3 max-w-xl text-sm leading-7 text-text-muted">
-          بخش ذخیره پرامپت‌ها در فاز بعدی تکمیل می‌شود. ساختار حساب و وضعیت اشتراک از Supabase خوانده می‌شود.
-        </p>
+      <div className="grid gap-5">
+        <div>
+          <h2 className="text-2xl font-black text-text">پرامپت‌های ذخیره‌شده</h2>
+          <p className="mt-2 text-sm text-text-muted">پرامپت‌هایی که برای استفاده بعدی ذخیره کرده‌ای.</p>
+        </div>
+
+        {savedPrompts.length > 0 ? (
+          <PromptGrid prompts={savedPrompts} isLoggedIn savedPromptIds={savedPromptIds} />
+        ) : (
+          <div className="rounded-2xl border border-border bg-surface p-8 text-center">
+            <h3 className="text-xl font-black text-text">هنوز پرامپتی ذخیره نکرده‌ای</h3>
+            <p className="mx-auto mt-3 max-w-xl text-sm leading-7 text-text-muted">
+              از گالری پرامپت‌ها شروع کن و موارد کاربردی را برای دسترسی سریع ذخیره کن.
+            </p>
+            <Link
+              href="/prompts"
+              className="mt-5 inline-flex rounded-lg bg-gradient-to-l from-accent to-accent-2 px-4 py-2.5 text-sm font-bold text-white shadow-glow"
+            >
+              مشاهده پرامپت‌ها
+            </Link>
+          </div>
+        )}
       </div>
     </section>
   );

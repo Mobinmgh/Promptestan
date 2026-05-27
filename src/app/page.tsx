@@ -1,11 +1,18 @@
 import Link from "next/link";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import { PromptGrid } from "@/components/prompts/prompt-grid";
+import { getViewerState } from "@/lib/auth/access";
 import { getCategories } from "@/lib/data/categories";
+import { getUserFavoritePromptIds } from "@/lib/data/favorites";
 import { getPublishedPrompts } from "@/lib/data/prompts";
 
 export default async function HomePage() {
-  const [prompts, categories] = await Promise.all([getPublishedPrompts(), getCategories()]);
+  const viewer = await getViewerState();
+  const [prompts, categories, savedPromptIds] = await Promise.all([
+    getPublishedPrompts(),
+    getCategories(),
+    viewer.user ? getUserFavoritePromptIds(viewer.user.id) : Promise.resolve([]),
+  ]);
   const featuredPrompts = prompts.filter((prompt) => prompt.access === "free").slice(0, 6);
   const heroPrompts = prompts.slice(0, 3);
 
@@ -93,7 +100,9 @@ export default async function HomePage() {
             مشاهده همه
           </Link>
         </div>
-        {featuredPrompts.length > 0 ? <PromptGrid prompts={featuredPrompts} /> : null}
+        {featuredPrompts.length > 0 ? (
+          <PromptGrid prompts={featuredPrompts} isLoggedIn={Boolean(viewer.user)} savedPromptIds={savedPromptIds} />
+        ) : null}
       </section>
 
       <section className="container-page py-10">

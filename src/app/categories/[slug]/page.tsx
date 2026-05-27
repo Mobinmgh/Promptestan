@@ -3,7 +3,9 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { notFound } from "next/navigation";
 import { PromptGrid } from "@/components/prompts/prompt-grid";
+import { getViewerState } from "@/lib/auth/access";
 import { getCategoryBySlug, getPromptsByCategorySlug } from "@/lib/data/categories";
+import { getUserFavoritePromptIds } from "@/lib/data/favorites";
 
 type CategoryPageProps = {
   params: {
@@ -31,13 +33,17 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
 }
 
 export default async function CategoryDetailPage({ params }: CategoryPageProps) {
+  const viewer = await getViewerState();
   const category = await getCategoryBySlug(params.slug);
 
   if (!category) {
     notFound();
   }
 
-  const categoryPrompts = await getPromptsByCategorySlug(params.slug);
+  const [categoryPrompts, savedPromptIds] = await Promise.all([
+    getPromptsByCategorySlug(params.slug),
+    viewer.user ? getUserFavoritePromptIds(viewer.user.id) : Promise.resolve([]),
+  ]);
 
   return (
     <section className="container-page py-8 md:py-12">
@@ -58,7 +64,7 @@ export default async function CategoryDetailPage({ params }: CategoryPageProps) 
       </div>
 
       {categoryPrompts.length > 0 ? (
-        <PromptGrid prompts={categoryPrompts} />
+        <PromptGrid prompts={categoryPrompts} isLoggedIn={Boolean(viewer.user)} savedPromptIds={savedPromptIds} />
       ) : (
         <div className="rounded-2xl border border-border bg-surface p-10 text-center">
           <h2 className="text-xl font-black text-text">فعلا پرامپتی در این دسته نیست</h2>

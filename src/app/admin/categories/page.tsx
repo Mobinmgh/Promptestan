@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createCategory, deleteCategory } from "@/app/admin/actions";
 import { CategoryForm } from "@/components/admin/category-form";
+import { ConfirmSubmitButton } from "@/components/admin/confirm-submit-button";
 import { requireAdmin } from "@/lib/auth/admin";
 
 type PageProps = {
@@ -11,8 +12,7 @@ type PageProps = {
 
 export default async function AdminCategoriesPage({ searchParams }: PageProps) {
   const { supabase } = await requireAdmin();
-  const { data: categories } = await supabase
-    .from("categories")
+  const { data: categories } = await (supabase.from("categories") as any)
     .select("id,name_fa,name_en,slug,description,sort_order,is_published")
     .order("sort_order");
 
@@ -51,9 +51,9 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps) {
                       <form action={deleteCategory}>
                         <input type="hidden" name="id" value={category.id} />
                         <input type="hidden" name="slug" value={category.slug} />
-                        <button className="rounded-lg border border-danger/40 px-3 py-1.5 text-xs font-bold text-red-200">
+                        <ConfirmSubmitButton className="rounded-lg border border-danger/40 px-3 py-1.5 text-xs font-bold text-red-200">
                           حذف
-                        </button>
+                        </ConfirmSubmitButton>
                       </form>
                     </div>
                   </td>

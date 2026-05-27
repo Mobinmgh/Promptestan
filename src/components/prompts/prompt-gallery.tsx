@@ -10,9 +10,13 @@ type FilterValue = "all" | "free" | "pro" | string;
 export function PromptGallery({
   prompts,
   categories,
+  isLoggedIn,
+  savedPromptIds,
 }: {
   prompts: Prompt[];
   categories: Category[];
+  isLoggedIn: boolean;
+  savedPromptIds: string[];
 }) {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<FilterValue>("all");
@@ -31,30 +35,15 @@ export function PromptGallery({
     const normalizedQuery = query.trim().toLowerCase();
 
     return prompts.filter((prompt) => {
-      const matchesFilter =
-        filter === "all" ||
-        prompt.access === filter ||
-        prompt.category === filter;
+      const matchesFilter = filter === "all" || prompt.access === filter || prompt.category === filter;
 
-      if (!matchesFilter) {
-        return false;
-      }
+      if (!matchesFilter) return false;
+      if (!normalizedQuery) return true;
 
-      if (!normalizedQuery) {
-        return true;
-      }
-
-      const searchable = [
-        prompt.title,
-        prompt.description,
-        prompt.category,
-        ...prompt.tags,
-        ...prompt.models,
-      ]
+      return [prompt.title, prompt.description, prompt.category, ...prompt.tags, ...prompt.models]
         .join(" ")
-        .toLowerCase();
-
-      return searchable.includes(normalizedQuery);
+        .toLowerCase()
+        .includes(normalizedQuery);
     });
   }, [filter, prompts, query]);
 
@@ -94,7 +83,7 @@ export function PromptGallery({
       </div>
 
       {filteredPrompts.length > 0 ? (
-        <PromptGrid prompts={filteredPrompts} />
+        <PromptGrid prompts={filteredPrompts} isLoggedIn={isLoggedIn} savedPromptIds={savedPromptIds} />
       ) : (
         <div className="rounded-2xl border border-border bg-surface p-10 text-center">
           <h2 className="text-xl font-black text-text">نتیجه‌ای پیدا نشد</h2>
