@@ -7,6 +7,9 @@ import { getViewerState } from "@/lib/auth/access";
 import { getCategoryBySlug, getPromptsByCategorySlug } from "@/lib/data/categories";
 import { getUserFavoritePromptIds } from "@/lib/data/favorites";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 type CategoryPageProps = {
   params: {
     slug: string;
