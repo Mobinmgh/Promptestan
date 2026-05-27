@@ -1,0 +1,15 @@
+<svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="180" height="180" rx="40" fill="#111111"/>
+  <defs>
+    <linearGradient id="accent" x1="34" y1="28" x2="150" y2="154" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8B5CF6"/>
+      <stop offset="0.52" stop-color="#6366F1"/>
+      <stop offset="1" stop-color="#22D3EE"/>
+    </linearGradient>
+  </defs>
+  <rect x="25" y="25" width="130" height="130" rx="32" fill="#171717" stroke="url(#accent)" stroke-width="5"/>
+  <rect x="52" y="50" width="76" height="56" rx="15" fill="#111111" stroke="url(#accent)" stroke-width="5"/>
+  <path d="M65 94L82 76L99 93L111 80L126 99" stroke="url(#accent)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="115" cy="68" r="7" fill="#8B5CF6"/>
+  <text x="90" y="142" text-anchor="middle" font-size="61" font-weight="900" font-family="Tahoma, Arial, sans-serif" fill="#F5F5F5">پ</text>
+</svg>
