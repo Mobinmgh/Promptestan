@@ -13,7 +13,7 @@ export function PromptGrid({
   const savedSet = new Set(savedPromptIds);
 
   return (
-    <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+    <div className="columns-1 gap-6 md:columns-2 xl:columns-3">
       {prompts.map((prompt) => (
         <PromptCard
           key={prompt.slug}

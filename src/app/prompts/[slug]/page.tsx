@@ -136,11 +136,11 @@ export default async function PromptDetailPage({ params }: PromptPageProps) {
 
         <aside className="order-1 lg:sticky lg:top-24 lg:order-2">
           <div className="overflow-hidden rounded-2xl border border-border bg-surface p-3 shadow-glow">
-            <div className="relative aspect-[4/5] overflow-hidden rounded-xl bg-background-soft">
+            <div className="overflow-hidden rounded-xl bg-background-soft">
               <img
                 src={prompt.coverImage}
                 alt={prompt.imageAlt}
-                className="h-full w-full object-cover"
+                className="mx-auto block h-auto max-h-[80vh] w-full object-contain"
               />
             </div>
           </div>

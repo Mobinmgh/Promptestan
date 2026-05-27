@@ -13,13 +13,13 @@ export function PromptCard({
   isSaved?: boolean;
 }) {
   return (
-    <article className="group overflow-hidden rounded-xl border border-border bg-surface transition duration-200 hover:-translate-y-1 hover:border-accent/80 hover:shadow-glow">
+    <article className="group mb-6 break-inside-avoid overflow-hidden rounded-xl border border-border bg-surface transition duration-200 hover:-translate-y-1 hover:border-accent/80 hover:shadow-glow">
       <Link href={`/prompts/${prompt.slug}`} className="block focus:outline-none focus:ring-2 focus:ring-accent">
-        <div className="relative aspect-[16/10] overflow-hidden bg-background-soft">
+        <div className="relative overflow-hidden bg-background-soft">
           <img
             src={prompt.coverImage}
             alt={prompt.imageAlt}
-            className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+            className="block h-auto w-full object-contain transition duration-300 group-hover:scale-[1.015]"
             loading="lazy"
           />
           <div className="absolute right-3 top-3 flex gap-2">
