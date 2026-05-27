@@ -26,10 +26,12 @@ export function PromptCard({
             <AccessBadge access={prompt.access} />
           </div>
 
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 hidden bg-gradient-to-t from-black/90 via-black/55 to-transparent p-4 pt-16 md:block">
-            <div className="translate-y-2 transition duration-200 group-hover:translate-y-0">
-              <h2 className="text-base font-black leading-7 text-white drop-shadow">{prompt.title}</h2>
-              <div className="mt-3 grid gap-3 opacity-0 transition duration-200 group-hover:opacity-100">
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 hidden bg-gradient-to-t from-black/95 via-black/65 to-transparent p-4 pt-20 md:block">
+            <div className="transition duration-200">
+              <h2 className="text-base font-black leading-7 text-white drop-shadow transition duration-200 group-hover:mb-3">
+                {prompt.title}
+              </h2>
+              <div className="grid max-h-0 gap-3 overflow-hidden opacity-0 transition-all duration-200 group-hover:max-h-56 group-hover:opacity-100">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="rounded-full border border-accent/35 bg-accent/20 px-2.5 py-1 text-xs text-indigo-100">
                     {prompt.category}
