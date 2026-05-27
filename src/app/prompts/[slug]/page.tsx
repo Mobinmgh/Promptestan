@@ -11,6 +11,9 @@ import { getViewerState } from "@/lib/auth/access";
 import { isPromptSaved, getUserFavoritePromptIds } from "@/lib/data/favorites";
 import { getPromptBySlug, getRelatedPrompts } from "@/lib/data/prompts";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 type PromptPageProps = {
   params: {
     slug: string;
