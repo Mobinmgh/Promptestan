@@ -1,0 +1,30 @@
+<svg width="520" height="128" viewBox="0 0 520 128" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Promptestan Full Logo</title>
+  <desc id="desc">Promptestan wordmark with dark visual prompt logo mark.</desc>
+  <defs>
+    <linearGradient id="bg" x1="8" y1="8" x2="112" y2="120" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#262626"/>
+      <stop offset="0.52" stop-color="#151515"/>
+      <stop offset="1" stop-color="#0f0f17"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="18" y1="16" x2="112" y2="118" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8B5CF6"/>
+      <stop offset="0.52" stop-color="#6366F1"/>
+      <stop offset="1" stop-color="#22D3EE"/>
+    </linearGradient>
+  </defs>
+
+  <g transform="translate(392 12)">
+    <rect x="0" y="0" width="104" height="104" rx="24" fill="url(#bg)"/>
+    <rect x="0" y="0" width="104" height="104" rx="24" stroke="url(#accent)" stroke-width="3"/>
+    <rect x="24" y="24" width="56" height="42" rx="11" fill="#111111" stroke="url(#accent)" stroke-width="3"/>
+    <path d="M32 57L43 46L54 57L62 49L74 62" stroke="url(#accent)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="69" cy="37" r="4.5" fill="#8B5CF6"/>
+    <text x="52" y="88" text-anchor="middle" font-size="42" font-weight="900" font-family="Vazirmatn, IRANSansX, Tahoma, Arial, sans-serif" fill="#F5F5F5">پ</text>
+  </g>
+
+  <text x="372" y="54" text-anchor="end" font-size="35" font-weight="900" font-family="Vazirmatn, IRANSansX, Tahoma, Arial, sans-serif" fill="#F5F5F5">پرامپتستان</text>
+  <text x="372" y="84" text-anchor="end" font-size="17" font-weight="500" font-family="Vazirmatn, IRANSansX, Tahoma, Arial, sans-serif" fill="#A3A3A3">گالری پرامپت تصویر</text>
+  <path d="M104 101H371" stroke="#343434" stroke-width="2" stroke-linecap="round"/>
+  <path d="M260 101H371" stroke="url(#accent)" stroke-width="2" stroke-linecap="round"/>
+</svg>
