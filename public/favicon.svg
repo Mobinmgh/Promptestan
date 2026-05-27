@@ -1,0 +1,20 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="6" y1="5" x2="58" y2="59" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#262626"/>
+      <stop offset="0.55" stop-color="#151515"/>
+      <stop offset="1" stop-color="#0F0F17"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="8" y1="6" x2="58" y2="60" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8B5CF6"/>
+      <stop offset="0.55" stop-color="#6366F1"/>
+      <stop offset="1" stop-color="#22D3EE"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="56" height="56" rx="14" fill="url(#bg)"/>
+  <rect x="4" y="4" width="56" height="56" rx="14" stroke="url(#accent)" stroke-width="2.5"/>
+  <rect x="17" y="16" width="30" height="22" rx="6" fill="#111111" stroke="url(#accent)" stroke-width="2.4"/>
+  <path d="M21 33L27 27L33 33L37 29L43 35" stroke="url(#accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="40" cy="23" r="2.6" fill="#8B5CF6"/>
+  <text x="32" y="54" text-anchor="middle" font-size="25" font-weight="900" font-family="Tahoma, Arial, sans-serif" fill="#F5F5F5">پ</text>
+</svg>
