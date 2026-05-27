@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { AccessBadge, DifficultyBadge, ModelBadge, TagBadge } from "@/components/prompts/badges";
 import { FavoriteButton } from "@/components/prompts/favorite-button";
 import { LockedPromptBlock } from "@/components/prompts/locked-prompt-block";
-import { PromptBlock } from "@/components/prompts/prompt-block";
+import { PromptCustomizer } from "@/components/prompts/prompt-customizer";
 import { PromptGrid } from "@/components/prompts/prompt-grid";
 import { getViewerState } from "@/lib/auth/access";
 import { isPromptSaved, getUserFavoritePromptIds } from "@/lib/data/favorites";
@@ -106,40 +106,12 @@ export default async function PromptDetailPage({ params }: PromptPageProps) {
           {isLocked ? (
             <LockedPromptBlock preview={prompt.promptPreview ?? ""} />
           ) : (
-            <PromptBlock title="متن پرامپت" text={prompt.promptText ?? ""} />
+            <PromptCustomizer
+              promptText={prompt.promptText ?? ""}
+              negativePrompt={prompt.negativePrompt}
+              variables={prompt.variables}
+            />
           )}
-
-          {!isLocked && prompt.negativePrompt ? (
-            <PromptBlock title="پرامپت منفی" text={prompt.negativePrompt} />
-          ) : null}
-
-          <section className="rounded-xl border border-border bg-surface p-5">
-            <h2 className="mb-4 text-lg font-bold text-text">متغیرها</h2>
-            {prompt.variables.length > 0 ? (
-              <div className="grid gap-3">
-                {prompt.variables.map((variable) => (
-                  <div
-                    key={variable.key}
-                    className="grid gap-2 rounded-lg border border-border bg-background-soft p-3 text-sm md:grid-cols-[9rem_1fr]"
-                  >
-                    <div>
-                      <span className="font-semibold text-text">{variable.labelFa}</span>
-                      <span dir="ltr" className="mt-1 block text-left text-xs text-text-muted">
-                        {`{${variable.key}}`}
-                      </span>
-                    </div>
-                    <span dir="ltr" className="prompt-text text-left text-text-soft">
-                      {variable.example}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="rounded-lg border border-border bg-background-soft p-3 text-sm text-text-muted">
-                برای این پرامپت متغیری ثبت نشده است.
-              </p>
-            )}
-          </section>
 
           <section className="rounded-xl border border-border bg-surface p-5">
             <h2 className="mb-4 text-lg font-bold text-text">راهنمای استفاده</h2>
