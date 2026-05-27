@@ -27,18 +27,19 @@ export function ActionForm({
   children,
   className,
 }: {
-  action: (state: State, formData: FormData) => Promise<State>;
+  action: (state: State, formData: FormData) => Promise<State | void>;
   submitLabel: string;
   children: ReactNode;
   className?: string;
 }) {
   const [state, formAction] = useFormState(action, {});
+  const safeState = state ?? {};
 
   return (
     <form action={formAction} className={className ?? "grid gap-5"} encType="multipart/form-data">
-      {state.error ? (
+      {safeState.error ? (
         <div className="rounded-lg border border-danger/40 bg-danger/10 p-3 text-sm leading-7 text-red-100">
-          {state.error}
+          {safeState.error}
         </div>
       ) : null}
       {children}
