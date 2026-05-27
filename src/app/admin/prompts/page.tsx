@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { deletePrompt, togglePromptPublished } from "@/app/admin/actions";
+import { deletePrompt, duplicatePrompt, togglePromptPublished } from "@/app/admin/actions";
 import { ConfirmSubmitButton } from "@/components/admin/confirm-submit-button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { accessLabels, difficultyLabels } from "@/lib/admin/constants";
@@ -10,8 +10,25 @@ type PageProps = {
     q?: string;
     access?: string;
     published?: string;
+    error?: string;
   };
 };
+
+function AccessBadge({ access }: { access: string }) {
+  return (
+    <span className={access === "pro" ? "rounded-full border border-accent/40 bg-accent/15 px-2.5 py-1 text-xs font-bold text-indigo-100" : "rounded-full border border-success/35 bg-success/10 px-2.5 py-1 text-xs font-bold text-success"}>
+      {accessLabels[access] ?? access}
+    </span>
+  );
+}
+
+function StatusBadge({ published }: { published: boolean }) {
+  return (
+    <span className={published ? "rounded-full border border-success/35 bg-success/10 px-2.5 py-1 text-xs font-bold text-success" : "rounded-full border border-warning/35 bg-warning/10 px-2.5 py-1 text-xs font-bold text-yellow-200"}>
+      {published ? "منتشرشده" : "پیش‌نویس"}
+    </span>
+  );
+}
 
 export default async function AdminPromptsPage({ searchParams }: PageProps) {
   const { supabase } = await requireAdmin();
@@ -38,6 +55,12 @@ export default async function AdminPromptsPage({ searchParams }: PageProps) {
         </Link>
       </div>
 
+      {searchParams?.error ? (
+        <div className="rounded-lg border border-danger/40 bg-danger/10 p-3 text-sm text-red-100">
+          {searchParams.error}
+        </div>
+      ) : null}
+
       <form className="grid gap-3 rounded-2xl border border-border bg-surface p-4 md:grid-cols-[1fr_12rem_12rem_auto]">
         <input name="q" defaultValue={q} placeholder="جستجو عنوان یا اسلاگ" className="rounded-lg border border-border bg-background-soft px-3 py-2 text-sm text-text outline-none focus:border-accent" />
         <select name="access" defaultValue={access} className="rounded-lg border border-border bg-background-soft px-3 py-2 text-sm text-text">
@@ -56,59 +79,70 @@ export default async function AdminPromptsPage({ searchParams }: PageProps) {
       </form>
 
       {(prompts ?? []).length > 0 ? (
-      <div className="overflow-x-auto rounded-2xl border border-border bg-surface">
-        <table className="w-full min-w-[960px] text-sm">
-          <thead className="bg-background-soft text-text-muted">
-            <tr>
-              <th className="p-3 text-right">عنوان</th>
-              <th className="p-3 text-right">اسلاگ</th>
-              <th className="p-3 text-right">دسته</th>
-              <th className="p-3 text-right">دسترسی</th>
-              <th className="p-3 text-right">سختی</th>
-              <th className="p-3 text-right">وضعیت</th>
-              <th className="p-3 text-right">به‌روزرسانی</th>
-              <th className="p-3 text-right">عملیات</th>
-            </tr>
-          </thead>
-          <tbody>
-            {(prompts ?? []).map((prompt: any) => (
-              <tr key={prompt.id} className="border-t border-border">
-                <td className="p-3 font-bold text-text">{prompt.title}</td>
-                <td className="p-3 text-left text-text-muted" dir="ltr">{prompt.slug}</td>
-                <td className="p-3 text-text-muted">{prompt.categories?.name_fa ?? "-"}</td>
-                <td className="p-3 text-text-muted">{accessLabels[prompt.access_level] ?? prompt.access_level}</td>
-                <td className="p-3 text-text-muted">{difficultyLabels[prompt.difficulty] ?? prompt.difficulty}</td>
-                <td className="p-3 text-text-muted">{prompt.is_published ? "منتشرشده" : "پیش‌نویس"}</td>
-                <td className="p-3 text-text-muted">{new Date(prompt.updated_at).toLocaleDateString("fa-IR")}</td>
-                <td className="p-3">
-                  <div className="flex gap-2">
-                    <Link href={`/admin/prompts/${prompt.id}/edit`} className="rounded-lg border border-border px-3 py-1.5 text-xs font-bold text-text-muted hover:text-text">
-                      ویرایش
-                    </Link>
-                    <form action={togglePromptPublished}>
-                      <input type="hidden" name="id" value={prompt.id} />
-                      <input type="hidden" name="slug" value={prompt.slug} />
-                      <input type="hidden" name="category_id" value={prompt.category_id ?? ""} />
-                      <input type="hidden" name="is_published" value={String(prompt.is_published)} />
-                      <button className="rounded-lg border border-border px-3 py-1.5 text-xs font-bold text-text-muted hover:text-text">
-                        {prompt.is_published ? "لغو انتشار" : "انتشار"}
-                      </button>
-                    </form>
-                    <form action={deletePrompt}>
-                      <input type="hidden" name="id" value={prompt.id} />
-                      <input type="hidden" name="slug" value={prompt.slug} />
-                      <input type="hidden" name="category_id" value={prompt.category_id ?? ""} />
-                      <ConfirmSubmitButton className="rounded-lg border border-danger/40 px-3 py-1.5 text-xs font-bold text-red-200">
-                        حذف
-                      </ConfirmSubmitButton>
-                    </form>
-                  </div>
-                </td>
+        <div className="overflow-x-auto rounded-2xl border border-border bg-surface">
+          <table className="w-full min-w-[1060px] text-sm">
+            <thead className="bg-background-soft text-text-muted">
+              <tr>
+                <th className="p-3 text-right">عنوان</th>
+                <th className="p-3 text-right">اسلاگ</th>
+                <th className="p-3 text-right">دسته</th>
+                <th className="p-3 text-right">دسترسی</th>
+                <th className="p-3 text-right">سختی</th>
+                <th className="p-3 text-right">وضعیت</th>
+                <th className="p-3 text-right">به‌روزرسانی</th>
+                <th className="p-3 text-right">عملیات</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {(prompts ?? []).map((prompt: any) => (
+                <tr key={prompt.id} className="border-t border-border">
+                  <td className="p-3 font-bold text-text">{prompt.title}</td>
+                  <td className="p-3 text-left text-text-muted" dir="ltr">{prompt.slug}</td>
+                  <td className="p-3 text-text-muted">{prompt.categories?.name_fa ?? "-"}</td>
+                  <td className="p-3"><AccessBadge access={prompt.access_level} /></td>
+                  <td className="p-3 text-text-muted">{difficultyLabels[prompt.difficulty] ?? prompt.difficulty}</td>
+                  <td className="p-3"><StatusBadge published={prompt.is_published} /></td>
+                  <td className="p-3 text-text-muted">{new Date(prompt.updated_at).toLocaleDateString("fa-IR")}</td>
+                  <td className="p-3">
+                    <div className="flex flex-wrap gap-2">
+                      <Link href={`/admin/prompts/${prompt.id}/edit`} className="rounded-lg border border-border px-3 py-1.5 text-xs font-bold text-text-muted hover:text-text">
+                        ویرایش
+                      </Link>
+                      {prompt.is_published ? (
+                        <Link href={`/prompts/${prompt.slug}`} className="rounded-lg border border-accent/40 px-3 py-1.5 text-xs font-bold text-indigo-100">
+                          نمایش عمومی
+                        </Link>
+                      ) : null}
+                      <form action={duplicatePrompt}>
+                        <input type="hidden" name="id" value={prompt.id} />
+                        <button className="rounded-lg border border-border px-3 py-1.5 text-xs font-bold text-text-muted hover:text-text">
+                          کپی
+                        </button>
+                      </form>
+                      <form action={togglePromptPublished}>
+                        <input type="hidden" name="id" value={prompt.id} />
+                        <input type="hidden" name="slug" value={prompt.slug} />
+                        <input type="hidden" name="category_id" value={prompt.category_id ?? ""} />
+                        <input type="hidden" name="is_published" value={String(prompt.is_published)} />
+                        <button className="rounded-lg border border-border px-3 py-1.5 text-xs font-bold text-text-muted hover:text-text">
+                          {prompt.is_published ? "لغو انتشار" : "انتشار"}
+                        </button>
+                      </form>
+                      <form action={deletePrompt}>
+                        <input type="hidden" name="id" value={prompt.id} />
+                        <input type="hidden" name="slug" value={prompt.slug} />
+                        <input type="hidden" name="category_id" value={prompt.category_id ?? ""} />
+                        <ConfirmSubmitButton className="rounded-lg border border-danger/40 px-3 py-1.5 text-xs font-bold text-red-200">
+                          حذف
+                        </ConfirmSubmitButton>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       ) : (
         <EmptyState
           title="پرامپتی پیدا نشد"

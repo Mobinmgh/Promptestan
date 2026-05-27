@@ -185,6 +185,61 @@ export async function togglePromptPublished(formData: FormData) {
   revalidatePromptPaths(slug, await getCategorySlug(supabase, categoryId));
 }
 
+export async function duplicatePrompt(formData: FormData) {
+  const { supabase } = await requireAdmin();
+  const id = value(formData, "id");
+
+  const { data: prompt, error } = await (supabase.from("prompts") as any)
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (error || !prompt) {
+    redirect(`/admin/prompts?error=${encodeURIComponent("پرامپت برای کپی پیدا نشد.")}`);
+  }
+
+  const baseSlug = `${prompt.slug}-copy`;
+  const { data: existing } = await (supabase.from("prompts") as any)
+    .select("id")
+    .eq("slug", baseSlug)
+    .maybeSingle();
+  const nextSlug = existing ? `${baseSlug}-${Date.now()}` : baseSlug;
+
+  const { data: newPrompt, error: insertError } = await (supabase.from("prompts") as any)
+    .insert({
+      title: `${prompt.title} copy`,
+      slug: nextSlug,
+      description: prompt.description,
+      prompt_text: prompt.prompt_text,
+      negative_prompt: prompt.negative_prompt,
+      variables: prompt.variables,
+      usage_notes_fa: prompt.usage_notes_fa,
+      best_for: prompt.best_for,
+      category_id: prompt.category_id,
+      model_compatibility: prompt.model_compatibility,
+      difficulty: prompt.difficulty,
+      access_level: prompt.access_level,
+      cover_image_url: prompt.cover_image_url,
+      example_images: prompt.example_images,
+      is_published: false,
+    })
+    .select("id,category_id")
+    .single();
+
+  if (insertError || !newPrompt) {
+    redirect(`/admin/prompts?error=${encodeURIComponent(insertError?.message ?? "کپی پرامپت ناموفق بود.")}`);
+  }
+
+  const { data: tagRows } = await (supabase.from("prompt_tags") as any)
+    .select("tag_id")
+    .eq("prompt_id", id);
+  const tagIds = (tagRows ?? []).map((row: { tag_id: string }) => row.tag_id);
+  await replacePromptTags(supabase, newPrompt.id, tagIds);
+
+  revalidatePromptPaths(undefined, await getCategorySlug(supabase, newPrompt.category_id));
+  redirect("/admin/prompts");
+}
+
 export async function createCategory(_state: ActionState, formData: FormData): Promise<ActionState> {
   const { supabase } = await requireAdmin();
   const nameFa = value(formData, "name_fa");
