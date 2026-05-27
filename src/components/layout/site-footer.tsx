@@ -1,5 +1,5 @@
+import Image from "next/image";
 import Link from "next/link";
-import { BrandLogo } from "@/components/layout/brand-logo";
 
 export function SiteFooter() {
   return (
@@ -7,7 +7,13 @@ export function SiteFooter() {
       <div className="container-page grid gap-10 py-10 md:grid-cols-[1.5fr_1fr_1fr]">
         <div>
           <div className="mb-4">
-            <BrandLogo />
+            <Image
+              src="/brand/footer-logo.svg"
+              alt="لوگوی پرامپتستان"
+              width={230}
+              height={58}
+              className="h-auto w-52 max-w-full"
+            />
           </div>
           <p className="max-w-md text-sm leading-7 text-text-muted">
             گالری پرامپت‌های آماده و تست‌شده برای ساخت عکس محصول، تبلیغات اینستاگرام، کاتالوگ،
