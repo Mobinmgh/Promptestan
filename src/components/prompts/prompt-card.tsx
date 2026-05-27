@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { Prompt } from "@/types/prompt";
 import { AccessBadge, DifficultyBadge, ModelBadge, TagBadge } from "./badges";
@@ -17,12 +16,11 @@ export function PromptCard({
     <article className="group overflow-hidden rounded-xl border border-border bg-surface transition duration-200 hover:-translate-y-1 hover:border-accent/80 hover:shadow-glow">
       <Link href={`/prompts/${prompt.slug}`} className="block focus:outline-none focus:ring-2 focus:ring-accent">
         <div className="relative aspect-[16/10] overflow-hidden bg-background-soft">
-          <Image
+          <img
             src={prompt.coverImage}
             alt={prompt.imageAlt}
-            fill
-            className="object-cover transition duration-300 group-hover:scale-105"
-            sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+            className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+            loading="lazy"
           />
           <div className="absolute right-3 top-3 flex gap-2">
             <AccessBadge access={prompt.access} />
