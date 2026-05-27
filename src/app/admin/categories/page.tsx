@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createCategory, deleteCategory } from "@/app/admin/actions";
 import { CategoryForm } from "@/components/admin/category-form";
 import { ConfirmSubmitButton } from "@/components/admin/confirm-submit-button";
+import { EmptyState } from "@/components/ui/empty-state";
 import { requireAdmin } from "@/lib/auth/admin";
 
 type PageProps = {
@@ -25,6 +26,7 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps) {
             {searchParams.error}
           </div>
         ) : null}
+        {(categories ?? []).length > 0 ? (
         <div className="overflow-x-auto rounded-2xl border border-border bg-surface">
           <table className="w-full min-w-[760px] text-sm">
             <thead className="bg-background-soft text-text-muted">
@@ -62,6 +64,12 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps) {
             </tbody>
           </table>
         </div>
+        ) : (
+          <EmptyState
+            title="دسته‌بندی‌ای وجود ندارد"
+            description="از فرم کنار صفحه اولین دسته‌بندی را بساز."
+          />
+        )}
       </div>
 
       <div className="grid gap-4">

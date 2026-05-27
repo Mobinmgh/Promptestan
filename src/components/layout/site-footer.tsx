@@ -12,8 +12,8 @@ export function SiteFooter() {
             <span className="text-lg font-bold">پرامپتستان</span>
           </div>
           <p className="max-w-md text-sm leading-7 text-text-muted">
-            گالری پرامپت‌های آماده و تست‌شده برای ساخت عکس محصول، تبلیغات اینستاگرام،
-            کاتالوگ، برندینگ و محتوای فروش.
+            گالری پرامپت‌های آماده و تست‌شده برای ساخت عکس محصول، تبلیغات اینستاگرام، کاتالوگ،
+            برندینگ و محتوای فروش.
           </p>
         </div>
 
@@ -27,11 +27,12 @@ export function SiteFooter() {
         </div>
 
         <div>
-          <h2 className="mb-4 text-sm font-semibold text-text">ارتباط</h2>
+          <h2 className="mb-4 text-sm font-semibold text-text">پشتیبانی</h2>
           <div className="grid gap-3 text-sm text-text-muted">
+            <Link href="/terms" className="hover:text-text">قوانین استفاده</Link>
+            <Link href="/privacy" className="hover:text-text">حریم خصوصی</Link>
+            <Link href="/contact" className="hover:text-text">تماس با ما</Link>
             <span dir="ltr" className="text-right">hello@promptestan.com</span>
-            <span>قوانین استفاده</span>
-            <span>حریم خصوصی</span>
           </div>
         </div>
       </div>

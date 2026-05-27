@@ -8,6 +8,13 @@ import { getPublishedPrompts } from "@/lib/data/prompts";
 export const metadata: Metadata = {
   title: "گالری پرامپت‌های تصویری",
   description: "پرامپت‌های آماده برای ساخت عکس محصول، تبلیغ، کاتالوگ، استوری و تصاویر حرفه‌ای با هوش مصنوعی.",
+  openGraph: {
+    title: "گالری پرامپت‌های تصویری پرامپتستان",
+    description: "پرامپت‌های آماده برای ساخت تصاویر حرفه‌ای با هوش مصنوعی.",
+    locale: "fa_IR",
+    siteName: "پرامپتستان",
+    url: "/prompts",
+  },
 };
 
 export default async function PromptsPage() {

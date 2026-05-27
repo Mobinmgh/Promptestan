@@ -31,6 +31,7 @@ export function CategoryForm({
       </div>
       <Field label="اسلاگ">
         <input name="slug" defaultValue={category?.slug ?? ""} dir="ltr" className={inputClass} required />
+        <span className="text-xs font-normal text-text-muted">فقط حروف انگلیسی کوچک، عدد و خط تیره</span>
       </Field>
       <Field label="توضیحات">
         <textarea name="description" defaultValue={category?.description ?? ""} className={textareaClass} />

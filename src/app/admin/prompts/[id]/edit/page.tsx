@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { updatePrompt } from "@/app/admin/actions";
 import { PromptForm } from "@/components/admin/prompt-form";
 import { requireAdmin } from "@/lib/auth/admin";
@@ -30,7 +31,15 @@ export default async function EditPromptPage({ params }: PageProps) {
 
   return (
     <div className="grid gap-5">
-      <h2 className="text-xl font-black text-text">ویرایش پرامپت</h2>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-xl font-black text-text">ویرایش پرامپت</h2>
+        <div className="flex gap-3 text-sm font-bold">
+          {prompt.is_published ? (
+            <Link href={`/prompts/${prompt.slug}`} className="text-indigo-200 hover:text-white">مشاهده صفحه عمومی</Link>
+          ) : null}
+          <Link href="/admin/prompts" className="text-text-muted hover:text-text">بازگشت به لیست</Link>
+        </div>
+      </div>
       <PromptForm action={action} submitLabel="ذخیره تغییرات" prompt={enrichedPrompt} categories={(categories ?? []) as any} tags={(tags ?? []) as any} />
     </div>
   );

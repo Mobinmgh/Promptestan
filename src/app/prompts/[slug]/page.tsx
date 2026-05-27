@@ -34,6 +34,14 @@ export async function generateMetadata({ params }: PromptPageProps): Promise<Met
   return {
     title: prompt.title,
     description: prompt.description,
+    openGraph: {
+      title: prompt.title,
+      description: prompt.description,
+      siteName: "پرامپتستان",
+      locale: "fa_IR",
+      url: `/prompts/${prompt.slug}`,
+      images: prompt.coverImage ? [{ url: prompt.coverImage, alt: prompt.imageAlt }] : undefined,
+    },
   };
 }
 

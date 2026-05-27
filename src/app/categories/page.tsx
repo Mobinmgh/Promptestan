@@ -1,11 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { EmptyState } from "@/components/ui/empty-state";
 import { getCategories } from "@/lib/data/categories";
 
 export const metadata: Metadata = {
   title: "دسته‌بندی‌ها",
   description: "دسته‌بندی پرامپت‌های تصویری آماده در پرامپتستان.",
+  openGraph: {
+    title: "دسته‌بندی‌های پرامپتستان",
+    description: "دسته‌بندی پرامپت‌های تصویری برای عکس محصول، تبلیغات، برندینگ و محتوا.",
+    locale: "fa_IR",
+    siteName: "پرامپتستان",
+    url: "/categories",
+  },
 };
 
 export default async function CategoriesPage() {
@@ -46,10 +54,12 @@ export default async function CategoriesPage() {
           ))}
         </div>
       ) : (
-        <div className="rounded-2xl border border-border bg-surface p-10 text-center">
-          <h2 className="text-xl font-black text-text">دسته‌بندی‌ای برای نمایش نیست</h2>
-          <p className="mt-3 text-sm text-text-muted">بعد از اجرای داده‌های اولیه، دسته‌بندی‌ها اینجا نمایش داده می‌شوند.</p>
-        </div>
+        <EmptyState
+          title="دسته‌بندی‌ای برای نمایش نیست"
+          description="بعد از ساخت دسته‌بندی در پنل مدیریت، این بخش پر می‌شود."
+          href="/prompts"
+          actionLabel="مشاهده پرامپت‌ها"
+        />
       )}
     </section>
   );

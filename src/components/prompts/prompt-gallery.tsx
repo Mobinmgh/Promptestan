@@ -3,6 +3,7 @@
 import { Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { PromptGrid } from "@/components/prompts/prompt-grid";
+import { EmptyState } from "@/components/ui/empty-state";
 import type { Category, Prompt } from "@/types/prompt";
 
 type FilterValue = "all" | "free" | "pro" | string;
@@ -85,12 +86,12 @@ export function PromptGallery({
       {filteredPrompts.length > 0 ? (
         <PromptGrid prompts={filteredPrompts} isLoggedIn={isLoggedIn} savedPromptIds={savedPromptIds} />
       ) : (
-        <div className="rounded-2xl border border-border bg-surface p-10 text-center">
-          <h2 className="text-xl font-black text-text">نتیجه‌ای پیدا نشد</h2>
-          <p className="mx-auto mt-3 max-w-md text-sm leading-7 text-text-muted">
-            عبارت جستجو یا فیلتر انتخابی را تغییر بده تا پرامپت‌های بیشتری ببینی.
-          </p>
-        </div>
+        <EmptyState
+          title="نتیجه‌ای پیدا نشد"
+          description="عبارت جستجو یا فیلتر انتخابی را تغییر بده، یا همه پرامپت‌ها را دوباره ببین."
+          href="/prompts"
+          actionLabel="پاک کردن فیلترها"
+        />
       )}
     </>
   );

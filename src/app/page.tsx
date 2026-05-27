@@ -1,10 +1,24 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
 import { PromptGrid } from "@/components/prompts/prompt-grid";
 import { getViewerState } from "@/lib/auth/access";
 import { getCategories } from "@/lib/data/categories";
 import { getUserFavoritePromptIds } from "@/lib/data/favorites";
 import { getPublishedPrompts } from "@/lib/data/prompts";
+
+export const metadata: Metadata = {
+  title: "پرامپت‌های آماده برای ساخت تصاویر حرفه‌ای با هوش مصنوعی",
+  description:
+    "پرامپتستان مرجع پرامپت‌های آماده و تست‌شده برای ساخت عکس محصول، تبلیغات اینستاگرام، کاتالوگ، برندینگ و تصاویر حرفه‌ای با هوش مصنوعی است.",
+  openGraph: {
+    title: "پرامپتستان",
+    description: "پرامپت‌های آماده و تست‌شده برای ساخت تصاویر حرفه‌ای با هوش مصنوعی.",
+    siteName: "پرامپتستان",
+    locale: "fa_IR",
+    url: "/",
+  },
+};
 
 export default async function HomePage() {
   const viewer = await getViewerState();

@@ -37,13 +37,22 @@ const vazirmatn = localFont({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://promptestan.com"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://promptestan.com"),
   title: {
     default: "Promptestan | پرامپتستان",
     template: "%s | پرامپتستان",
   },
   description:
     "پرامپتستان گالری پرامپت‌های آماده و تست‌شده برای ساخت تصاویر حرفه‌ای با هوش مصنوعی است.",
+  openGraph: {
+    title: "Promptestan | پرامپتستان",
+    description:
+      "پرامپت‌های آماده برای ساخت عکس محصول، تبلیغات اینستاگرام، کاتالوگ، برندینگ و تصاویر حرفه‌ای با هوش مصنوعی.",
+    siteName: "پرامپتستان",
+    locale: "fa_IR",
+    type: "website",
+    url: "/",
+  },
 };
 
 export default function RootLayout({

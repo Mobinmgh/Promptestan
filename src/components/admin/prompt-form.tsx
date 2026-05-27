@@ -49,6 +49,7 @@ export function PromptForm({
         </Field>
         <Field label="اسلاگ">
           <input name="slug" defaultValue={prompt?.slug ?? ""} dir="ltr" className={inputClass} required />
+          <span className="text-xs font-normal text-text-muted">فقط حروف انگلیسی کوچک، عدد و خط تیره</span>
         </Field>
       </div>
 
@@ -66,6 +67,9 @@ export function PromptForm({
 
       <Field label="متغیرها JSON">
         <textarea name="variables" defaultValue={variablesValue} dir="ltr" className="min-h-36 rounded-lg border border-border bg-background-soft px-3 py-2 text-left font-mono text-xs leading-6 text-text outline-none focus:border-accent focus:ring-2 focus:ring-accent/30" />
+        <span className="text-xs font-normal text-text-muted">
+          فرمت نمونه: [{"{"}"key":"product","label_fa":"محصول","example":"perfume bottle"{"}"}]
+        </span>
       </Field>
 
       <div className="grid gap-5 md:grid-cols-2">
@@ -84,6 +88,7 @@ export function PromptForm({
 
       <Field label="راهنمای استفاده فارسی">
         <textarea name="usage_notes_fa" defaultValue={prompt?.usage_notes_fa ?? ""} className={textareaClass} />
+        <span className="text-xs font-normal text-text-muted">هر نکته را در یک خط جدا بنویس.</span>
       </Field>
 
       <div className="grid gap-5 md:grid-cols-3">
@@ -100,6 +105,7 @@ export function PromptForm({
               <option key={item} value={item}>{accessLabels[item]}</option>
             ))}
           </select>
+          <span className="text-xs font-normal text-text-muted">رایگان برای همه کامل دیده می‌شود؛ حرفه‌ای برای کاربران عادی قفل است.</span>
         </Field>
         <label className="mt-7 flex items-center gap-2 rounded-lg border border-border bg-background-soft px-3 py-2 text-sm font-semibold text-text">
           <input type="checkbox" name="is_published" defaultChecked={prompt?.is_published ?? false} />
@@ -142,6 +148,7 @@ export function PromptForm({
 
       <Field label="تصاویر نمونه، هر URL در یک خط">
         <textarea name="example_images" defaultValue={(prompt?.example_images ?? []).join("\n")} dir="ltr" className={textareaClass} />
+        <span className="text-xs font-normal text-text-muted">هر آدرس تصویر را در یک خط جدا وارد کن.</span>
       </Field>
     </ActionForm>
   );

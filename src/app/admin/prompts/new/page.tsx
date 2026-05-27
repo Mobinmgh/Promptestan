@@ -1,6 +1,7 @@
 import { createPrompt } from "@/app/admin/actions";
 import { PromptForm } from "@/components/admin/prompt-form";
 import { requireAdmin } from "@/lib/auth/admin";
+import Link from "next/link";
 
 export default async function NewPromptPage() {
   const { supabase } = await requireAdmin();
@@ -11,7 +12,10 @@ export default async function NewPromptPage() {
 
   return (
     <div className="grid gap-5">
-      <h2 className="text-xl font-black text-text">پرامپت جدید</h2>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-xl font-black text-text">پرامپت جدید</h2>
+        <Link href="/admin/prompts" className="text-sm font-bold text-indigo-200 hover:text-white">بازگشت به لیست</Link>
+      </div>
       <PromptForm action={createPrompt} submitLabel="ساخت پرامپت" categories={(categories ?? []) as any} tags={(tags ?? []) as any} />
     </div>
   );

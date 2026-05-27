@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { deletePrompt, togglePromptPublished } from "@/app/admin/actions";
 import { ConfirmSubmitButton } from "@/components/admin/confirm-submit-button";
+import { EmptyState } from "@/components/ui/empty-state";
 import { accessLabels, difficultyLabels } from "@/lib/admin/constants";
 import { requireAdmin } from "@/lib/auth/admin";
 
@@ -54,6 +55,7 @@ export default async function AdminPromptsPage({ searchParams }: PageProps) {
         </button>
       </form>
 
+      {(prompts ?? []).length > 0 ? (
       <div className="overflow-x-auto rounded-2xl border border-border bg-surface">
         <table className="w-full min-w-[960px] text-sm">
           <thead className="bg-background-soft text-text-muted">
@@ -107,6 +109,14 @@ export default async function AdminPromptsPage({ searchParams }: PageProps) {
           </tbody>
         </table>
       </div>
+      ) : (
+        <EmptyState
+          title="پرامپتی پیدا نشد"
+          description="اولین پرامپت را بساز یا فیلترهای جستجو را تغییر بده."
+          href="/admin/prompts/new"
+          actionLabel="ساخت پرامپت"
+        />
+      )}
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { PromptGrid } from "@/components/prompts/prompt-grid";
+import { EmptyState } from "@/components/ui/empty-state";
 import { ensureProfile } from "@/lib/auth/profile";
 import { getSavedPromptsForUser, getUserFavoritePromptIds } from "@/lib/data/favorites";
 import { createClient, hasSupabaseEnv } from "@/lib/supabase/server";
@@ -68,18 +68,12 @@ export default async function DashboardPage() {
         {savedPrompts.length > 0 ? (
           <PromptGrid prompts={savedPrompts} isLoggedIn savedPromptIds={savedPromptIds} />
         ) : (
-          <div className="rounded-2xl border border-border bg-surface p-8 text-center">
-            <h3 className="text-xl font-black text-text">هنوز پرامپتی ذخیره نکرده‌ای</h3>
-            <p className="mx-auto mt-3 max-w-xl text-sm leading-7 text-text-muted">
-              از گالری پرامپت‌ها شروع کن و موارد کاربردی را برای دسترسی سریع ذخیره کن.
-            </p>
-            <Link
-              href="/prompts"
-              className="mt-5 inline-flex rounded-lg bg-gradient-to-l from-accent to-accent-2 px-4 py-2.5 text-sm font-bold text-white shadow-glow"
-            >
-              مشاهده پرامپت‌ها
-            </Link>
-          </div>
+          <EmptyState
+            title="هنوز پرامپتی ذخیره نکرده‌ای"
+            description="از گالری پرامپت‌ها شروع کن و موارد کاربردی را برای دسترسی سریع ذخیره کن."
+            href="/prompts"
+            actionLabel="مشاهده پرامپت‌ها"
+          />
         )}
       </div>
     </section>

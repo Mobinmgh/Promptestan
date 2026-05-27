@@ -22,6 +22,7 @@ export function TagForm({
       </Field>
       <Field label="اسلاگ">
         <input name="slug" defaultValue={tag?.slug ?? ""} dir="ltr" className={inputClass} required />
+        <span className="text-xs font-normal text-text-muted">فقط حروف انگلیسی کوچک، عدد و خط تیره</span>
       </Field>
     </ActionForm>
   );

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createTag, deleteTag } from "@/app/admin/actions";
 import { ConfirmSubmitButton } from "@/components/admin/confirm-submit-button";
 import { TagForm } from "@/components/admin/tag-form";
+import { EmptyState } from "@/components/ui/empty-state";
 import { requireAdmin } from "@/lib/auth/admin";
 
 export default async function AdminTagsPage() {
@@ -12,6 +13,7 @@ export default async function AdminTagsPage() {
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_24rem] lg:items-start">
       <div className="grid gap-4">
         <h2 className="text-xl font-black text-text">تگ‌ها</h2>
+        {(tags ?? []).length > 0 ? (
         <div className="overflow-x-auto rounded-2xl border border-border bg-surface">
           <table className="w-full min-w-[620px] text-sm">
             <thead className="bg-background-soft text-text-muted">
@@ -44,6 +46,12 @@ export default async function AdminTagsPage() {
             </tbody>
           </table>
         </div>
+        ) : (
+          <EmptyState
+            title="تگی وجود ندارد"
+            description="از فرم کنار صفحه اولین تگ را بساز."
+          />
+        )}
       </div>
 
       <div className="grid gap-4">
