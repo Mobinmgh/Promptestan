@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { ArrowLeft, CheckCircle2 } from "lucide-react";
+import { HeroPromptSlider } from "@/components/home/hero-prompt-slider";
 import { PromptGrid } from "@/components/prompts/prompt-grid";
 import { getViewerState } from "@/lib/auth/access";
 import { getCategories } from "@/lib/data/categories";
@@ -27,8 +28,9 @@ export default async function HomePage() {
     getCategories(),
     viewer.user ? getUserFavoritePromptIds(viewer.user.id) : Promise.resolve([]),
   ]);
-  const featuredPrompts = prompts.filter((prompt) => prompt.access === "free").slice(0, 6);
-  const heroPrompts = prompts.slice(0, 3);
+  const heroPrompts = prompts.slice(0, 5);
+  const featuredFreePrompts = prompts.filter((prompt) => prompt.access === "free").slice(0, 6);
+  const latestProPrompts = prompts.filter((prompt) => prompt.access === "pro").slice(0, 6);
 
   return (
     <>
@@ -62,31 +64,7 @@ export default async function HomePage() {
           </div>
         </div>
 
-        <div className="rounded-2xl border border-border bg-surface p-3 shadow-glow">
-          <div className="grid gap-3">
-            {heroPrompts.length > 0 ? (
-              heroPrompts.map((prompt) => (
-                <Link
-                  key={prompt.slug}
-                  href={`/prompts/${prompt.slug}`}
-                  className="rounded-xl border border-border bg-background-soft p-4 transition hover:border-accent/70"
-                >
-                  <div className="mb-2 flex items-center justify-between gap-3">
-                    <h2 className="font-bold text-text">{prompt.title}</h2>
-                    <span className="rounded-full bg-accent/15 px-2.5 py-1 text-xs text-indigo-100">
-                      {prompt.category}
-                    </span>
-                  </div>
-                  <p className="line-clamp-2 text-sm leading-7 text-text-muted">{prompt.description}</p>
-                </Link>
-              ))
-            ) : (
-              <div className="rounded-xl border border-border bg-background-soft p-6 text-sm leading-7 text-text-muted">
-                پس از اجرای داده‌های اولیه، پرامپت‌های منتخب اینجا نمایش داده می‌شوند.
-              </div>
-            )}
-          </div>
-        </div>
+        <HeroPromptSlider prompts={heroPrompts} />
       </section>
 
       <section className="container-page py-10">
@@ -114,10 +92,27 @@ export default async function HomePage() {
             مشاهده همه
           </Link>
         </div>
-        {featuredPrompts.length > 0 ? (
-          <PromptGrid prompts={featuredPrompts} isLoggedIn={Boolean(viewer.user)} savedPromptIds={savedPromptIds} />
+        {featuredFreePrompts.length > 0 ? (
+          <PromptGrid prompts={featuredFreePrompts} isLoggedIn={Boolean(viewer.user)} savedPromptIds={savedPromptIds} />
         ) : null}
       </section>
+
+      {latestProPrompts.length > 0 ? (
+        <section className="container-page py-10">
+          <div className="mb-6 flex items-end justify-between gap-4">
+            <div>
+              <h2 className="text-2xl font-black text-text">پرامپت‌های حرفه‌ای جدید</h2>
+              <p className="mt-2 text-sm text-text-muted">
+                جدیدترین پرامپت‌های پریمیوم برای خروجی‌های جدی‌تر و فروش‌محور.
+              </p>
+            </div>
+            <Link href="/pricing" className="hidden text-sm font-semibold text-indigo-200 hover:text-white md:block">
+              دیدن دسترسی حرفه‌ای
+            </Link>
+          </div>
+          <PromptGrid prompts={latestProPrompts} isLoggedIn={Boolean(viewer.user)} savedPromptIds={savedPromptIds} />
+        </section>
+      ) : null}
 
       <section className="container-page py-10">
         <div className="rounded-2xl border border-accent/35 bg-accent/10 p-6 md:p-8">
