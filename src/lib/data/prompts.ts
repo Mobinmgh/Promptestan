@@ -1,5 +1,6 @@
 import { unstable_noStore as noStore } from "next/cache";
 import { canViewProContent } from "@/lib/auth/access";
+import { formatPromptRow } from "@/lib/data/format";
 import { mapPublicPrompt } from "@/lib/data/mapper";
 import { createClient, hasSupabaseEnv } from "@/lib/supabase/server";
 import type { PublicPromptRow } from "@/types/database";
@@ -49,39 +50,33 @@ export async function getPromptBySlug(slug: string): Promise<Prompt | null> {
       return null;
     }
 
-    const { data: tagRows } = await (supabase.from("prompt_tags") as any)
+    const { data: tagRows, error: tagError } = await (supabase.from("prompt_tags") as any)
       .select("tags(slug)")
       .eq("prompt_id", prompt.id);
 
-    return {
+    if (tagError) {
+      console.error("getPromptBySlug tags failed", tagError.message);
+    }
+
+    return formatPromptRow({
       id: prompt.id,
       slug: prompt.slug,
       title: prompt.title,
-      description: prompt.description ?? "",
-      category: prompt.categories?.name_fa ?? "بدون دسته‌بندی",
-      categorySlug: prompt.categories?.slug ?? undefined,
-      tags: (tagRows ?? []).map((row: any) => row.tags?.slug).filter(Boolean),
-      access: prompt.access_level,
+      description: prompt.description,
+      prompt_text: prompt.prompt_text,
+      prompt_preview: prompt.access_level === "pro" ? `${String(prompt.prompt_text ?? "").slice(0, 180)}...` : null,
+      negative_prompt: prompt.negative_prompt,
+      variables: prompt.variables,
+      usage_notes_fa: prompt.usage_notes_fa,
+      best_for: prompt.best_for,
+      model_compatibility: prompt.model_compatibility,
       difficulty: prompt.difficulty,
-      models: prompt.model_compatibility ?? [],
-      coverImage: prompt.cover_image_url ?? "/mock/perfume.svg",
-      imageAlt: prompt.title,
-      promptText: prompt.prompt_text,
-      promptPreview: prompt.access_level === "pro" ? `${String(prompt.prompt_text).slice(0, 180)}...` : null,
-      negativePrompt: prompt.negative_prompt,
-      variables: Array.isArray(prompt.variables)
-        ? prompt.variables.map((item: any) => ({
-            key: String(item.key ?? ""),
-            labelFa: String(item.label_fa ?? item.key ?? ""),
-            example: String(item.example ?? ""),
-          }))
-        : [],
-      usageGuide: String(prompt.usage_notes_fa ?? "")
-        .split(/\r?\n/)
-        .map((item) => item.trim().replace(/^[-•]\s*/, ""))
-        .filter(Boolean),
-      bestFor: prompt.best_for ?? "ساخت تصویر حرفه‌ای با هوش مصنوعی",
-    };
+      access_level: prompt.access_level,
+      cover_image_url: prompt.cover_image_url,
+      category_name: prompt.categories?.name_fa ?? null,
+      category_slug: prompt.categories?.slug ?? null,
+      tags: (tagRows ?? []).map((row: any) => row.tags?.slug).filter(Boolean),
+    });
   }
 
   const { data, error } = await (supabase as any).rpc("get_public_prompt_by_slug", { p_slug: slug });
