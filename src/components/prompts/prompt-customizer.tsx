@@ -26,10 +26,10 @@ export function PromptCustomizer({
 
     for (const variable of variables) {
       const value = values[variable.key]?.trim();
+      const fallback = variable.example?.trim();
+      const replacement = value || fallback || `{${variable.key}}`;
 
-      if (value) {
-        output = replaceAllLiteral(output, `{${variable.key}}`, value);
-      }
+      output = replaceAllLiteral(output, `{${variable.key}}`, replacement);
     }
 
     const cleanNegativePrompt = negativePrompt?.trim();
@@ -52,7 +52,7 @@ export function PromptCustomizer({
       <div className="border-b border-border px-4 py-3">
         <h2 className="text-sm font-semibold text-text">پرامپت آماده کپی</h2>
         <p className="mt-1 text-xs leading-6 text-text-muted">
-          متغیرها را پر کن تا متن نهایی پرامپت به‌صورت زنده آماده کپی شود.
+          متغیرها را پر کن تا متن نهایی پرامپت به‌صورت زنده آماده کپی شود. اگر فیلدی خالی بماند، نمونه همان فیلد داخل پرامپت قرار می‌گیرد.
         </p>
       </div>
 
@@ -74,7 +74,7 @@ export function PromptCustomizer({
                 className="h-11 rounded-lg border border-border bg-background-soft px-3 text-sm text-text outline-none transition placeholder:text-text-muted focus:border-accent focus:ring-2 focus:ring-accent/30"
               />
               <span dir="ltr" className="text-left text-xs font-normal text-text-muted">
-                {`{${variable.key}}`}
+                {`{${variable.key}} → ${variable.example || "بدون نمونه"}`}
               </span>
             </label>
           ))}
