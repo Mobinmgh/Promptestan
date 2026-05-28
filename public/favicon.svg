@@ -1,20 +1,26 @@
 <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="bg" x1="6" y1="5" x2="58" y2="59" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#262626"/>
-      <stop offset="0.55" stop-color="#151515"/>
-      <stop offset="1" stop-color="#0F0F17"/>
+    <radialGradient id="bg" cx="50%" cy="42%" r="70%">
+      <stop offset="0" stop-color="#FBF8F5"/>
+      <stop offset="0.72" stop-color="#F2EDE8"/>
+      <stop offset="1" stop-color="#E8E0D8"/>
+    </radialGradient>
+    <linearGradient id="metal" x1="16" y1="9" x2="48" y2="57" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#F8FAFC"/>
+      <stop offset="0.16" stop-color="#BFC7CF"/>
+      <stop offset="0.35" stop-color="#F4F7FA"/>
+      <stop offset="0.56" stop-color="#7D8994"/>
+      <stop offset="0.8" stop-color="#DCE3EA"/>
+      <stop offset="1" stop-color="#48525C"/>
     </linearGradient>
-    <linearGradient id="accent" x1="8" y1="6" x2="58" y2="60" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#8B5CF6"/>
-      <stop offset="0.55" stop-color="#6366F1"/>
-      <stop offset="1" stop-color="#22D3EE"/>
-    </linearGradient>
+    <filter id="glow" x="0" y="0" width="64" height="64" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="0" stdDeviation="1.4" flood-color="#38BDF8" flood-opacity="0.9"/>
+    </filter>
   </defs>
-  <rect x="4" y="4" width="56" height="56" rx="14" fill="url(#bg)"/>
-  <rect x="4" y="4" width="56" height="56" rx="14" stroke="url(#accent)" stroke-width="2.5"/>
-  <rect x="17" y="16" width="30" height="22" rx="6" fill="#111111" stroke="url(#accent)" stroke-width="2.4"/>
-  <path d="M21 33L27 27L33 33L37 29L43 35" stroke="url(#accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="40" cy="23" r="2.6" fill="#8B5CF6"/>
-  <text x="32" y="54" text-anchor="middle" font-size="25" font-weight="900" font-family="Tahoma, Arial, sans-serif" fill="#F5F5F5">پ</text>
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <text x="32" y="50" text-anchor="middle" font-size="47" font-weight="800" font-family="Georgia, 'Times New Roman', serif" fill="url(#metal)" stroke="#5E6B76" stroke-width="0.8">P</text>
+  <path d="M23 24V32L31 40V50" stroke="#4B5563" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" opacity="0.75"/>
+  <path d="M21.5 31L35 44.5" stroke="#60A5FA" stroke-width="1.6" stroke-linecap="round" filter="url(#glow)"/>
+  <circle cx="23" cy="24" r="1.8" fill="#F8FAFC" stroke="#38BDF8" stroke-width="1" filter="url(#glow)"/>
+  <circle cx="31" cy="50" r="1.8" fill="#F8FAFC" stroke="#38BDF8" stroke-width="1" filter="url(#glow)"/>
 </svg>
