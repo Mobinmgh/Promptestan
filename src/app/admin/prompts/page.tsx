@@ -14,9 +14,21 @@ type PageProps = {
   };
 };
 
+type CategoryRow = {
+  id: string;
+  name_fa: string;
+  slug: string;
+};
+
 function AccessBadge({ access }: { access: string }) {
   return (
-    <span className={access === "pro" ? "rounded-full border border-accent/40 bg-accent/15 px-2.5 py-1 text-xs font-bold text-indigo-100" : "rounded-full border border-success/35 bg-success/10 px-2.5 py-1 text-xs font-bold text-success"}>
+    <span
+      className={
+        access === "pro"
+          ? "rounded-full border border-accent/40 bg-accent/15 px-2.5 py-1 text-xs font-bold text-indigo-100"
+          : "rounded-full border border-success/35 bg-success/10 px-2.5 py-1 text-xs font-bold text-success"
+      }
+    >
       {accessLabels[access] ?? access}
     </span>
   );
@@ -24,7 +36,13 @@ function AccessBadge({ access }: { access: string }) {
 
 function StatusBadge({ published }: { published: boolean }) {
   return (
-    <span className={published ? "rounded-full border border-success/35 bg-success/10 px-2.5 py-1 text-xs font-bold text-success" : "rounded-full border border-warning/35 bg-warning/10 px-2.5 py-1 text-xs font-bold text-yellow-200"}>
+    <span
+      className={
+        published
+          ? "rounded-full border border-success/35 bg-success/10 px-2.5 py-1 text-xs font-bold text-success"
+          : "rounded-full border border-warning/35 bg-warning/10 px-2.5 py-1 text-xs font-bold text-yellow-200"
+      }
+    >
       {published ? "منتشرشده" : "پیش‌نویس"}
     </span>
   );
@@ -37,7 +55,7 @@ export default async function AdminPromptsPage({ searchParams }: PageProps) {
   const published = searchParams?.published ?? "all";
 
   let query = (supabase.from("prompts") as any)
-    .select("id,title,slug,access_level,difficulty,is_published,updated_at,category_id,categories(name_fa,slug)")
+    .select("id,title,slug,access_level,difficulty,is_published,updated_at,category_id")
     .order("updated_at", { ascending: false });
 
   if (q) query = query.or(`title.ilike.%${q}%,slug.ilike.%${q}%`);
@@ -46,28 +64,46 @@ export default async function AdminPromptsPage({ searchParams }: PageProps) {
 
   const { data: prompts, error: promptsError } = await query;
   const promptRows = prompts ?? [];
+  const categoryById = new Map<string, CategoryRow>();
   const categoriesByPromptId = new Map<string, string[]>();
   let categoryWarning: string | null = null;
 
   if (!promptsError && promptRows.length > 0) {
     const promptIds = promptRows.map((prompt: any) => prompt.id).filter(Boolean);
-    const { data: categoryRows, error: categoryError } = await (supabase.from("prompt_categories") as any)
-      .select("prompt_id,categories(name_fa,slug)")
+    const primaryCategoryIds = promptRows.map((prompt: any) => prompt.category_id).filter(Boolean);
+
+    const { data: promptCategoryRows, error: promptCategoryError } = await (supabase.from("prompt_categories") as any)
+      .select("prompt_id,category_id")
       .in("prompt_id", promptIds);
 
-    if (categoryError) {
-      categoryWarning = `پرامپت‌ها دریافت شدند اما دسته‌بندی‌ها کامل بارگذاری نشدند: ${categoryError.message}`;
+    if (promptCategoryError) {
+      categoryWarning = `پرامپت‌ها دریافت شدند اما دسته‌بندی‌ها کامل بارگذاری نشدند: ${promptCategoryError.message}`;
     } else {
-      for (const row of categoryRows ?? []) {
-        const category = Array.isArray(row.categories) ? row.categories[0] : row.categories;
+      const joinCategoryIds = (promptCategoryRows ?? []).map((row: any) => row.category_id).filter(Boolean);
+      const categoryIds = Array.from(new Set([...primaryCategoryIds, ...joinCategoryIds]));
+      const { data: categoryRows, error: categoryError } =
+        categoryIds.length > 0
+          ? await (supabase.from("categories") as any).select("id,name_fa,slug").in("id", categoryIds)
+          : { data: [], error: null };
 
-        if (!category?.name_fa) {
-          continue;
+      if (categoryError) {
+        categoryWarning = `پرامپت‌ها دریافت شدند اما دسته‌بندی‌ها کامل بارگذاری نشدند: ${categoryError.message}`;
+      } else {
+        for (const category of categoryRows ?? []) {
+          categoryById.set(category.id, category);
         }
 
-        const current = categoriesByPromptId.get(row.prompt_id) ?? [];
-        current.push(category.name_fa);
-        categoriesByPromptId.set(row.prompt_id, current);
+        for (const row of promptCategoryRows ?? []) {
+          const category = categoryById.get(row.category_id);
+
+          if (!category?.name_fa) {
+            continue;
+          }
+
+          const current = categoriesByPromptId.get(row.prompt_id) ?? [];
+          current.push(category.name_fa);
+          categoriesByPromptId.set(row.prompt_id, current);
+        }
       }
     }
   }
@@ -134,69 +170,70 @@ export default async function AdminPromptsPage({ searchParams }: PageProps) {
             <tbody>
               {promptRows.map((prompt: any) => {
                 const assignedCategories = categoriesByPromptId.get(prompt.id) ?? [];
-                const categories = assignedCategories.length > 0 ? assignedCategories : prompt.categories?.name_fa ? [prompt.categories.name_fa] : [];
+                const primaryCategory = prompt.category_id ? categoryById.get(prompt.category_id)?.name_fa : null;
+                const categories = assignedCategories.length > 0 ? assignedCategories : primaryCategory ? [primaryCategory] : [];
                 const visibleCategories = categories.slice(0, 2);
                 const extraCategoryCount = Math.max(categories.length - visibleCategories.length, 0);
 
                 return (
-                <tr key={prompt.id} className="border-t border-border">
-                  <td className="p-3 font-bold text-text">{prompt.title}</td>
-                  <td className="p-3 text-left text-text-muted" dir="ltr">{prompt.slug}</td>
-                  <td className="p-3 text-text-muted">
-                    <div className="flex flex-wrap gap-1.5">
-                      {visibleCategories.length > 0 ? visibleCategories.map((category: string) => (
-                        <span key={category} className="rounded-full border border-border bg-background-soft px-2 py-1 text-xs">
-                          {category}
-                        </span>
-                      )) : "-"}
-                      {extraCategoryCount > 0 ? (
-                        <span className="rounded-full border border-border bg-background-soft px-2 py-1 text-xs">
-                          +{extraCategoryCount}
-                        </span>
-                      ) : null}
-                    </div>
-                  </td>
-                  <td className="p-3"><AccessBadge access={prompt.access_level} /></td>
-                  <td className="p-3 text-text-muted">{difficultyLabels[prompt.difficulty] ?? prompt.difficulty}</td>
-                  <td className="p-3"><StatusBadge published={prompt.is_published} /></td>
-                  <td className="p-3 text-text-muted">{new Date(prompt.updated_at).toLocaleDateString("fa-IR")}</td>
-                  <td className="p-3">
-                    <div className="flex flex-wrap gap-2">
-                      <Link href={`/admin/prompts/${prompt.id}/edit`} className="rounded-lg border border-border px-3 py-1.5 text-xs font-bold text-text-muted hover:text-text">
-                        ویرایش
-                      </Link>
-                      {prompt.is_published ? (
-                        <Link href={`/prompts/${prompt.slug}`} className="rounded-lg border border-accent/40 px-3 py-1.5 text-xs font-bold text-indigo-100">
-                          نمایش عمومی
+                  <tr key={prompt.id} className="border-t border-border">
+                    <td className="p-3 font-bold text-text">{prompt.title}</td>
+                    <td className="p-3 text-left text-text-muted" dir="ltr">{prompt.slug}</td>
+                    <td className="p-3 text-text-muted">
+                      <div className="flex flex-wrap gap-1.5">
+                        {visibleCategories.length > 0 ? visibleCategories.map((category: string) => (
+                          <span key={category} className="rounded-full border border-border bg-background-soft px-2 py-1 text-xs">
+                            {category}
+                          </span>
+                        )) : "-"}
+                        {extraCategoryCount > 0 ? (
+                          <span className="rounded-full border border-border bg-background-soft px-2 py-1 text-xs">
+                            +{extraCategoryCount}
+                          </span>
+                        ) : null}
+                      </div>
+                    </td>
+                    <td className="p-3"><AccessBadge access={prompt.access_level} /></td>
+                    <td className="p-3 text-text-muted">{difficultyLabels[prompt.difficulty] ?? prompt.difficulty}</td>
+                    <td className="p-3"><StatusBadge published={prompt.is_published} /></td>
+                    <td className="p-3 text-text-muted">{new Date(prompt.updated_at).toLocaleDateString("fa-IR")}</td>
+                    <td className="p-3">
+                      <div className="flex flex-wrap gap-2">
+                        <Link href={`/admin/prompts/${prompt.id}/edit`} className="rounded-lg border border-border px-3 py-1.5 text-xs font-bold text-text-muted hover:text-text">
+                          ویرایش
                         </Link>
-                      ) : null}
-                      <form action={duplicatePrompt}>
-                        <input type="hidden" name="id" value={prompt.id} />
-                        <button className="rounded-lg border border-border px-3 py-1.5 text-xs font-bold text-text-muted hover:text-text">
-                          کپی
-                        </button>
-                      </form>
-                      <form action={togglePromptPublished}>
-                        <input type="hidden" name="id" value={prompt.id} />
-                        <input type="hidden" name="slug" value={prompt.slug} />
-                        <input type="hidden" name="category_id" value={prompt.category_id ?? ""} />
-                        <input type="hidden" name="is_published" value={String(prompt.is_published)} />
-                        <button className="rounded-lg border border-border px-3 py-1.5 text-xs font-bold text-text-muted hover:text-text">
-                          {prompt.is_published ? "لغو انتشار" : "انتشار"}
-                        </button>
-                      </form>
-                      <form action={deletePrompt}>
-                        <input type="hidden" name="id" value={prompt.id} />
-                        <input type="hidden" name="slug" value={prompt.slug} />
-                        <input type="hidden" name="category_id" value={prompt.category_id ?? ""} />
-                        <ConfirmSubmitButton className="rounded-lg border border-danger/40 px-3 py-1.5 text-xs font-bold text-red-200">
-                          حذف
-                        </ConfirmSubmitButton>
-                      </form>
-                    </div>
-                  </td>
-                </tr>
-              );
+                        {prompt.is_published ? (
+                          <Link href={`/prompts/${prompt.slug}`} className="rounded-lg border border-accent/40 px-3 py-1.5 text-xs font-bold text-indigo-100">
+                            نمایش عمومی
+                          </Link>
+                        ) : null}
+                        <form action={duplicatePrompt}>
+                          <input type="hidden" name="id" value={prompt.id} />
+                          <button className="rounded-lg border border-border px-3 py-1.5 text-xs font-bold text-text-muted hover:text-text">
+                            کپی
+                          </button>
+                        </form>
+                        <form action={togglePromptPublished}>
+                          <input type="hidden" name="id" value={prompt.id} />
+                          <input type="hidden" name="slug" value={prompt.slug} />
+                          <input type="hidden" name="category_id" value={prompt.category_id ?? ""} />
+                          <input type="hidden" name="is_published" value={String(prompt.is_published)} />
+                          <button className="rounded-lg border border-border px-3 py-1.5 text-xs font-bold text-text-muted hover:text-text">
+                            {prompt.is_published ? "لغو انتشار" : "انتشار"}
+                          </button>
+                        </form>
+                        <form action={deletePrompt}>
+                          <input type="hidden" name="id" value={prompt.id} />
+                          <input type="hidden" name="slug" value={prompt.slug} />
+                          <input type="hidden" name="category_id" value={prompt.category_id ?? ""} />
+                          <ConfirmSubmitButton className="rounded-lg border border-danger/40 px-3 py-1.5 text-xs font-bold text-red-200">
+                            حذف
+                          </ConfirmSubmitButton>
+                        </form>
+                      </div>
+                    </td>
+                  </tr>
+                );
               })}
             </tbody>
           </table>
