@@ -1,0 +1,31 @@
+<svg width="160" height="160" viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Promptestan P logo">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="44%" r="74%">
+      <stop offset="0" stop-color="#FFFCF8"/>
+      <stop offset="0.78" stop-color="#F0EAE4"/>
+      <stop offset="1" stop-color="#E4DCD3"/>
+    </radialGradient>
+    <linearGradient id="metal" x1="42" y1="24" x2="118" y2="136" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="0.22" stop-color="#AEB8C2"/>
+      <stop offset="0.43" stop-color="#F4F7FA"/>
+      <stop offset="0.67" stop-color="#667381"/>
+      <stop offset="1" stop-color="#CBD5DF"/>
+    </linearGradient>
+    <filter id="shadow" x="0" y="0" width="160" height="160" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#111827" flood-opacity="0.22"/>
+      <feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#60A5FA" flood-opacity="0.32"/>
+    </filter>
+    <filter id="glow" x="0" y="0" width="160" height="160" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#38BDF8" flood-opacity="0.95"/>
+    </filter>
+  </defs>
+  <rect width="160" height="160" rx="32" fill="url(#bg)"/>
+  <g filter="url(#shadow)">
+    <text x="80" y="124" text-anchor="middle" font-size="120" font-weight="800" font-family="Georgia, Times New Roman, serif" fill="url(#metal)" stroke="#53606D" stroke-width="1.6">P</text>
+    <path d="M61 58V77L77 93V116" stroke="#4B5563" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" opacity="0.75"/>
+    <path d="M55 73L87 105" stroke="#60A5FA" stroke-width="3.1" stroke-linecap="round" filter="url(#glow)"/>
+    <circle cx="61" cy="58" r="4.4" fill="#F8FAFC" stroke="#38BDF8" stroke-width="2.1" filter="url(#glow)"/>
+    <circle cx="77" cy="116" r="4.4" fill="#F8FAFC" stroke="#38BDF8" stroke-width="2.1" filter="url(#glow)"/>
+  </g>
+</svg>
