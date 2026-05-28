@@ -45,43 +45,47 @@ export function HeroPromptSlider({ prompts }: { prompts: Prompt[] }) {
     >
       <div className="relative overflow-hidden rounded-xl bg-background-soft">
         <div className="relative min-h-[26rem] sm:min-h-[30rem] lg:min-h-[34rem]">
-          {slides.map((prompt, index) => (
-            <Link
-              key={prompt.slug}
-              href={`/prompts/${prompt.slug}`}
-              className={
-                index === activeIndex
-                  ? "absolute inset-0 opacity-100 transition-opacity duration-700"
-                  : "absolute inset-0 opacity-0 transition-opacity duration-700"
-              }
-              aria-hidden={index !== activeIndex}
-              tabIndex={index === activeIndex ? 0 : -1}
-            >
-              <img
-                src={prompt.coverImage}
-                alt={prompt.imageAlt}
-                className="h-full w-full object-contain"
-                loading={index === 0 ? "eager" : "lazy"}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/45 to-black/5" />
-              <div className="absolute inset-x-0 bottom-0 p-5 md:p-6">
-                <div className="mb-3 flex flex-wrap items-center gap-2">
-                  <AccessBadge access={prompt.access} />
-                  <span className="rounded-full border border-white/15 bg-black/40 px-2.5 py-1 text-xs text-zinc-100 backdrop-blur">
-                    {prompt.category}
+          {slides.map((prompt, index) => {
+            const isActive = index === activeIndex;
+
+            return (
+              <Link
+                key={prompt.slug}
+                href={`/prompts/${prompt.slug}`}
+                className={
+                  isActive
+                    ? "pointer-events-auto absolute inset-0 z-10 opacity-100 transition-opacity duration-700"
+                    : "pointer-events-none absolute inset-0 z-0 opacity-0 transition-opacity duration-700"
+                }
+                aria-hidden={!isActive}
+                tabIndex={isActive ? 0 : -1}
+              >
+                <img
+                  src={prompt.coverImage}
+                  alt={prompt.imageAlt}
+                  className="h-full w-full object-contain"
+                  loading={index === 0 ? "eager" : "lazy"}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/45 to-black/5" />
+                <div className="absolute inset-x-0 bottom-0 p-5 md:p-6">
+                  <div className="mb-3 flex flex-wrap items-center gap-2">
+                    <AccessBadge access={prompt.access} />
+                    <span className="rounded-full border border-white/15 bg-black/40 px-2.5 py-1 text-xs text-zinc-100 backdrop-blur">
+                      {prompt.category}
+                    </span>
+                  </div>
+                  <h2 className="text-2xl font-black leading-9 text-white md:text-3xl">{prompt.title}</h2>
+                  <p className="mt-2 line-clamp-2 max-w-xl text-sm leading-7 text-zinc-200">
+                    {prompt.description}
+                  </p>
+                  <span className="mt-4 inline-flex items-center gap-2 rounded-lg bg-white/12 px-3 py-2 text-sm font-bold text-white backdrop-blur transition hover:bg-white/18">
+                    مشاهده پرامپت
+                    <ArrowLeft size={16} />
                   </span>
                 </div>
-                <h2 className="text-2xl font-black leading-9 text-white md:text-3xl">{prompt.title}</h2>
-                <p className="mt-2 line-clamp-2 max-w-xl text-sm leading-7 text-zinc-200">
-                  {prompt.description}
-                </p>
-                <span className="mt-4 inline-flex items-center gap-2 rounded-lg bg-white/12 px-3 py-2 text-sm font-bold text-white backdrop-blur transition hover:bg-white/18">
-                  مشاهده پرامپت
-                  <ArrowLeft size={16} />
-                </span>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            );
+          })}
         </div>
 
         {slides.length > 1 ? (
