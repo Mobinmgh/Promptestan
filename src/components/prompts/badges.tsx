@@ -11,10 +11,8 @@ export function AccessBadge({ access }: { access: PromptAccess }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-semibold",
-        access === "free"
-          ? "border-success/35 bg-success/12 text-success"
-          : "border-accent-2/45 bg-accent-2/15 text-violet-200",
+        "inline-flex items-center rounded-full border border-white/80 bg-white px-2.5 py-1 text-xs font-black shadow-lg shadow-black/25 ring-1 ring-black/10 backdrop-blur",
+        access === "free" ? "text-emerald-700" : "text-violet-700",
       )}
     >
       {access === "free" ? "رایگان" : "حرفه‌ای"}
