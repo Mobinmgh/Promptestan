@@ -36,7 +36,7 @@ export async function getPromptBySlug(slug: string): Promise<Prompt | null> {
 
   if (canViewPro) {
     const { data: prompt, error } = await (supabase.from("prompts") as any)
-      .select("*,categories(name_fa,slug),prompt_categories(categories(name_fa,slug))")
+      .select("*")
       .eq("slug", slug)
       .eq("is_published", true)
       .maybeSingle();
@@ -50,17 +50,48 @@ export async function getPromptBySlug(slug: string): Promise<Prompt | null> {
       return null;
     }
 
-    const { data: tagRows, error: tagError } = await (supabase.from("prompt_tags") as any)
-      .select("tags(slug)")
-      .eq("prompt_id", prompt.id);
+    const [tagResult, promptCategoryResult] = await Promise.all([
+      (supabase.from("prompt_tags") as any).select("tags(slug)").eq("prompt_id", prompt.id),
+      (supabase.from("prompt_categories") as any).select("category_id").eq("prompt_id", prompt.id),
+    ]);
 
-    if (tagError) {
-      console.error("getPromptBySlug tags failed", tagError.message);
+    if (tagResult.error) {
+      console.error("getPromptBySlug tags failed", tagResult.error.message);
     }
 
-    const assignedCategories = (prompt.prompt_categories ?? [])
-      .map((row: any) => row.categories)
+    if (promptCategoryResult.error) {
+      console.error("getPromptBySlug prompt categories failed", promptCategoryResult.error.message);
+    }
+
+    const assignedCategoryIds = (promptCategoryResult.data ?? [])
+      .map((row: any) => row.category_id)
       .filter(Boolean);
+
+    const categoryIds = Array.from(new Set([...(assignedCategoryIds as string[]), prompt.category_id].filter(Boolean)));
+
+    const { data: categoryRows, error: categoryError } = categoryIds.length > 0
+      ? await (supabase.from("categories") as any)
+          .select("id,name_fa,slug")
+          .in("id", categoryIds)
+      : { data: [], error: null };
+
+    if (categoryError) {
+      console.error("getPromptBySlug categories failed", categoryError.message);
+    }
+
+    const categoryById = new Map<string, { name_fa: string; slug: string }>();
+
+    for (const category of categoryRows ?? []) {
+      if (category.id) {
+        categoryById.set(category.id, category);
+      }
+    }
+
+    const assignedCategories = assignedCategoryIds
+      .map((categoryId: string) => categoryById.get(categoryId))
+      .filter(Boolean) as { name_fa: string; slug: string }[];
+
+    const primaryCategory = assignedCategories[0] ?? (prompt.category_id ? categoryById.get(prompt.category_id) : null);
 
     return formatPromptRow({
       id: prompt.id,
@@ -77,11 +108,11 @@ export async function getPromptBySlug(slug: string): Promise<Prompt | null> {
       difficulty: prompt.difficulty,
       access_level: prompt.access_level,
       cover_image_url: prompt.cover_image_url,
-      category_name: prompt.categories?.name_fa ?? null,
-      category_slug: prompt.categories?.slug ?? null,
-      category_names: assignedCategories.map((category: any) => category.name_fa).filter(Boolean),
-      category_slugs: assignedCategories.map((category: any) => category.slug).filter(Boolean),
-      tags: (tagRows ?? []).map((row: any) => row.tags?.slug).filter(Boolean),
+      category_name: primaryCategory?.name_fa ?? null,
+      category_slug: primaryCategory?.slug ?? null,
+      category_names: assignedCategories.map((category) => category.name_fa).filter(Boolean),
+      category_slugs: assignedCategories.map((category) => category.slug).filter(Boolean),
+      tags: (tagResult.data ?? []).map((row: any) => row.tags?.slug).filter(Boolean),
     });
   }
 
