@@ -59,7 +59,8 @@ function parsePromptForm(formData: FormData) {
       variables: variables.data,
       usage_notes_fa: value(formData, "usage_notes_fa") || null,
       best_for: value(formData, "best_for") || null,
-      category_id: value(formData, "category_id") || null,
+      category_ids: values(formData, "category_ids"),
+      category_id: values(formData, "category_ids")[0] || null,
       model_compatibility: values(formData, "model_compatibility"),
       difficulty,
       access_level: accessLevel,
@@ -74,11 +75,12 @@ function parsePromptForm(formData: FormData) {
   };
 }
 
-async function getCategorySlug(supabase: any, categoryId?: string | null) {
-  if (!categoryId) return null;
+async function getCategorySlugs(supabase: any, categoryIds: string[]) {
+  const uniqueIds = Array.from(new Set(categoryIds.filter(Boolean)));
+  if (uniqueIds.length === 0) return [];
 
-  const { data } = await (supabase.from("categories") as any).select("slug").eq("id", categoryId).maybeSingle();
-  return data?.slug ?? null;
+  const { data } = await (supabase.from("categories") as any).select("slug").in("id", uniqueIds);
+  return (data ?? []).map((category: { slug: string }) => category.slug).filter(Boolean);
 }
 
 async function uploadCoverIfPresent(supabase: any, promptId: string, formData: FormData) {
@@ -111,13 +113,38 @@ async function replacePromptTags(supabase: any, promptId: string, tagIds: string
   }
 }
 
+async function replacePromptCategories(supabase: any, promptId: string, categoryIds: string[]) {
+  await (supabase.from("prompt_categories") as any).delete().eq("prompt_id", promptId);
+
+  const uniqueIds = Array.from(new Set(categoryIds.filter(Boolean)));
+  if (uniqueIds.length > 0) {
+    await (supabase.from("prompt_categories") as any).insert(
+      uniqueIds.map((categoryId) => ({ prompt_id: promptId, category_id: categoryId })),
+    );
+  }
+}
+
+async function getPromptCategoryIds(supabase: any, promptId: string) {
+  const { data } = await (supabase.from("prompt_categories") as any)
+    .select("category_id")
+    .eq("prompt_id", promptId);
+  return (data ?? []).map((row: { category_id: string }) => row.category_id).filter(Boolean);
+}
+
+function revalidatePromptCategoryPaths(slug: string | null | undefined, categorySlugs: string[]) {
+  revalidatePromptPaths(slug);
+  for (const categorySlug of categorySlugs) {
+    revalidatePromptPaths(null, categorySlug);
+  }
+}
+
 export async function createPrompt(_state: ActionState, formData: FormData): Promise<ActionState> {
   const { supabase } = await requireAdmin();
   const parsed = parsePromptForm(formData);
 
   if (parsed.error) return { error: parsed.error };
 
-  const { tag_ids, ...payload } = parsed.data as NonNullable<ReturnType<typeof parsePromptForm>["data"]>;
+  const { tag_ids, category_ids, ...payload } = parsed.data as NonNullable<ReturnType<typeof parsePromptForm>["data"]>;
   const { data, error } = await (supabase.from("prompts") as any).insert(payload).select("id,slug,category_id").single();
 
   if (error || !data) {
@@ -130,7 +157,8 @@ export async function createPrompt(_state: ActionState, formData: FormData): Pro
   }
 
   await replacePromptTags(supabase, data.id, tag_ids);
-  revalidatePromptPaths(data.slug, await getCategorySlug(supabase, data.category_id));
+  await replacePromptCategories(supabase, data.id, category_ids);
+  revalidatePromptCategoryPaths(data.slug, await getCategorySlugs(supabase, category_ids));
 
   if (upload.error) return { error: upload.error };
 
@@ -143,7 +171,8 @@ export async function updatePrompt(id: string, _state: ActionState, formData: Fo
 
   if (parsed.error) return { error: parsed.error };
 
-  const { tag_ids, ...payload } = parsed.data as NonNullable<ReturnType<typeof parsePromptForm>["data"]>;
+  const { tag_ids, category_ids, ...payload } = parsed.data as NonNullable<ReturnType<typeof parsePromptForm>["data"]>;
+  const previousCategoryIds = await getPromptCategoryIds(supabase, id);
   const upload = await uploadCoverIfPresent(supabase, id, formData);
   const finalPayload = upload.url ? { ...payload, cover_image_url: upload.url } : payload;
   const { data, error } = await (supabase.from("prompts") as any)
@@ -157,7 +186,8 @@ export async function updatePrompt(id: string, _state: ActionState, formData: Fo
   }
 
   await replacePromptTags(supabase, id, tag_ids);
-  revalidatePromptPaths(data.slug, await getCategorySlug(supabase, data.category_id));
+  await replacePromptCategories(supabase, id, category_ids);
+  revalidatePromptCategoryPaths(data.slug, await getCategorySlugs(supabase, [...previousCategoryIds, ...category_ids]));
 
   if (upload.error) return { error: upload.error };
 
@@ -169,9 +199,10 @@ export async function deletePrompt(formData: FormData) {
   const id = value(formData, "id");
   const slug = value(formData, "slug");
   const categoryId = value(formData, "category_id");
+  const categoryIds = (await getPromptCategoryIds(supabase, id)).concat(categoryId ? [categoryId] : []);
 
   await (supabase.from("prompts") as any).delete().eq("id", id);
-  revalidatePromptPaths(slug, await getCategorySlug(supabase, categoryId));
+  revalidatePromptCategoryPaths(slug, await getCategorySlugs(supabase, categoryIds));
 }
 
 export async function togglePromptPublished(formData: FormData) {
@@ -179,10 +210,11 @@ export async function togglePromptPublished(formData: FormData) {
   const id = value(formData, "id");
   const slug = value(formData, "slug");
   const categoryId = value(formData, "category_id");
+  const categoryIds = (await getPromptCategoryIds(supabase, id)).concat(categoryId ? [categoryId] : []);
   const nextValue = formData.get("is_published") !== "true";
 
   await (supabase.from("prompts") as any).update({ is_published: nextValue }).eq("id", id);
-  revalidatePromptPaths(slug, await getCategorySlug(supabase, categoryId));
+  revalidatePromptCategoryPaths(slug, await getCategorySlugs(supabase, categoryIds));
 }
 
 export async function duplicatePrompt(formData: FormData) {
@@ -204,6 +236,10 @@ export async function duplicatePrompt(formData: FormData) {
     .eq("slug", baseSlug)
     .maybeSingle();
   const nextSlug = existing ? `${baseSlug}-${Date.now()}` : baseSlug;
+  const sourceCategoryIds: string[] = (await getPromptCategoryIds(supabase, id)).concat(
+    prompt.category_id ? [String(prompt.category_id)] : [],
+  );
+  const duplicateCategoryIds: string[] = Array.from(new Set(sourceCategoryIds.filter(Boolean)));
 
   const { data: newPrompt, error: insertError } = await (supabase.from("prompts") as any)
     .insert({
@@ -215,7 +251,7 @@ export async function duplicatePrompt(formData: FormData) {
       variables: prompt.variables,
       usage_notes_fa: prompt.usage_notes_fa,
       best_for: prompt.best_for,
-      category_id: prompt.category_id,
+      category_id: duplicateCategoryIds[0] ?? null,
       model_compatibility: prompt.model_compatibility,
       difficulty: prompt.difficulty,
       access_level: prompt.access_level,
@@ -235,8 +271,9 @@ export async function duplicatePrompt(formData: FormData) {
     .eq("prompt_id", id);
   const tagIds = (tagRows ?? []).map((row: { tag_id: string }) => row.tag_id);
   await replacePromptTags(supabase, newPrompt.id, tagIds);
+  await replacePromptCategories(supabase, newPrompt.id, duplicateCategoryIds);
 
-  revalidatePromptPaths(undefined, await getCategorySlug(supabase, newPrompt.category_id));
+  revalidatePromptCategoryPaths(undefined, await getCategorySlugs(supabase, duplicateCategoryIds));
   redirect("/admin/prompts");
 }
 
@@ -291,8 +328,11 @@ export async function deleteCategory(formData: FormData) {
   const id = value(formData, "id");
   const slug = value(formData, "slug");
   const { count } = await (supabase.from("prompts") as any).select("id", { count: "exact", head: true }).eq("category_id", id);
+  const { count: joinCount } = await (supabase.from("prompt_categories") as any)
+    .select("prompt_id", { count: "exact", head: true })
+    .eq("category_id", id);
 
-  if (count && count > 0) {
+  if ((count && count > 0) || (joinCount && joinCount > 0)) {
     redirect(`/admin/categories?error=${encodeURIComponent("این دسته‌بندی توسط پرامپت‌ها استفاده شده و قابل حذف نیست.")}`);
   }
 

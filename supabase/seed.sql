@@ -208,3 +208,9 @@ join lateral unnest(
 ) tag_slug on true
 join public.tags t on t.slug = tag_slug
 on conflict do nothing;
+
+insert into public.prompt_categories (prompt_id, category_id)
+select id, category_id
+from public.prompts
+where category_id is not null
+on conflict (prompt_id, category_id) do nothing;

@@ -14,6 +14,9 @@ export type Prompt = {
   description: string;
   category: string;
   categorySlug?: string;
+  categories?: { name: string; slug: string }[];
+  categoryNames?: string[];
+  categorySlugs?: string[];
   tags: string[];
   access: PromptAccess;
   difficulty: PromptDifficulty;

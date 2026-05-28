@@ -22,6 +22,7 @@ type PromptRow = {
   example_images?: string[];
   is_published?: boolean;
   tag_ids?: string[];
+  category_ids?: string[];
 };
 
 export function PromptForm({
@@ -39,6 +40,7 @@ export function PromptForm({
 }) {
   const selectedModels = new Set(prompt?.model_compatibility ?? []);
   const selectedTags = new Set(prompt?.tag_ids ?? []);
+  const selectedCategories = new Set(prompt?.category_ids ?? (prompt?.category_id ? [prompt.category_id] : []));
   const variablesValue = JSON.stringify(prompt?.variables ?? [], null, 2);
 
   return (
@@ -73,14 +75,20 @@ export function PromptForm({
       </Field>
 
       <div className="grid gap-5 md:grid-cols-2">
-        <Field label="دسته‌بندی">
-          <select name="category_id" defaultValue={prompt?.category_id ?? ""} className={inputClass}>
-            <option value="">بدون دسته‌بندی</option>
+        <section className="rounded-xl border border-border bg-background-soft p-4">
+          <h2 className="mb-2 text-sm font-bold text-text">دسته‌بندی‌ها</h2>
+          <p className="mb-3 text-xs leading-6 text-text-muted">
+            می‌توانی چند دسته‌بندی برای یک پرامپت انتخاب کنی.
+          </p>
+          <div className="flex flex-wrap gap-3">
             {categories.map((category) => (
-              <option key={category.id} value={category.id}>{category.name_fa}</option>
+              <label key={category.id} className="flex items-center gap-2 rounded-lg border border-border bg-surface px-3 py-2 text-sm text-text-muted">
+                <input type="checkbox" name="category_ids" value={category.id} defaultChecked={selectedCategories.has(category.id)} />
+                {category.name_fa}
+              </label>
             ))}
-          </select>
-        </Field>
+          </div>
+        </section>
         <Field label="بهترین کاربرد">
           <input name="best_for" defaultValue={prompt?.best_for ?? ""} className={inputClass} />
         </Field>

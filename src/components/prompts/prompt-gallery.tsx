@@ -27,7 +27,7 @@ export function PromptGallery({
     { value: "free", label: "رایگان" },
     { value: "pro", label: "حرفه‌ای" },
     ...categories.map((category) => ({
-      value: category.name,
+      value: category.slug,
       label: category.name,
     })),
   ];
@@ -36,12 +36,22 @@ export function PromptGallery({
     const normalizedQuery = query.trim().toLowerCase();
 
     return prompts.filter((prompt) => {
-      const matchesFilter = filter === "all" || prompt.access === filter || prompt.category === filter;
+      const categorySlugs = prompt.categorySlugs ?? (prompt.categorySlug ? [prompt.categorySlug] : []);
+      const matchesFilter =
+        filter === "all" || prompt.access === filter || categorySlugs.includes(String(filter));
 
       if (!matchesFilter) return false;
       if (!normalizedQuery) return true;
 
-      return [prompt.title, prompt.description, prompt.category, ...prompt.tags, ...prompt.models]
+      return [
+        prompt.title,
+        prompt.description,
+        prompt.category,
+        ...(prompt.categoryNames ?? []),
+        ...(prompt.categorySlugs ?? []),
+        ...prompt.tags,
+        ...prompt.models,
+      ]
         .join(" ")
         .toLowerCase()
         .includes(normalizedQuery);

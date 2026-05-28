@@ -98,6 +98,19 @@ export type Database = {
         };
         Update: Partial<Database["public"]["Tables"]["prompt_tags"]["Insert"]>;
       };
+      prompt_categories: {
+        Row: {
+          prompt_id: string;
+          category_id: string;
+          created_at: string;
+        };
+        Insert: {
+          prompt_id: string;
+          category_id: string;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["prompt_categories"]["Insert"]>;
+      };
       favorites: {
         Row: {
           user_id: string;
@@ -158,6 +171,8 @@ export type PublicPromptRow = {
   example_images: string[];
   category_name: string | null;
   category_slug: string | null;
+  category_names?: string[] | null;
+  category_slugs?: string[] | null;
   tags: string[];
 };
 

@@ -61,6 +61,7 @@ export default async function PromptDetailPage({ params }: PromptPageProps) {
     viewer.user ? getUserFavoritePromptIds(viewer.user.id) : Promise.resolve([]),
   ]);
   const isLocked = prompt.access === "pro" && !viewer.canViewPro;
+  const promptCategories = prompt.categories?.length ? prompt.categories : [{ name: prompt.category, slug: prompt.categorySlug ?? "" }];
 
   return (
     <section className="container-page py-8 md:py-12">
@@ -78,9 +79,11 @@ export default async function PromptDetailPage({ params }: PromptPageProps) {
             <div className="mb-4 flex flex-wrap gap-2">
               <AccessBadge access={prompt.access} />
               <DifficultyBadge difficulty={prompt.difficulty} />
-              <span className="rounded-full border border-accent/30 bg-accent/10 px-2.5 py-1 text-xs text-indigo-100">
-                {prompt.category}
-              </span>
+              {promptCategories.map((category) => (
+                <span key={category.slug || category.name} className="rounded-full border border-accent/30 bg-accent/10 px-2.5 py-1 text-xs text-indigo-100">
+                  {category.name}
+                </span>
+              ))}
             </div>
             <h1 className="text-3xl font-black leading-tight text-text md:text-4xl">{prompt.title}</h1>
             <p className="mt-4 text-sm leading-8 text-text-muted md:text-base">{prompt.description}</p>

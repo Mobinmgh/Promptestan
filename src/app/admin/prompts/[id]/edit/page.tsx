@@ -12,11 +12,12 @@ type PageProps = {
 
 export default async function EditPromptPage({ params }: PageProps) {
   const { supabase } = await requireAdmin();
-  const [{ data: prompt }, { data: categories }, { data: tags }, { data: promptTags }] = await Promise.all([
+  const [{ data: prompt }, { data: categories }, { data: tags }, { data: promptTags }, { data: promptCategories }] = await Promise.all([
     (supabase.from("prompts") as any).select("*").eq("id", params.id).maybeSingle(),
     supabase.from("categories").select("id,name_fa").order("sort_order"),
     supabase.from("tags").select("id,name,slug").order("name"),
     supabase.from("prompt_tags").select("tag_id").eq("prompt_id", params.id),
+    supabase.from("prompt_categories").select("category_id").eq("prompt_id", params.id),
   ]);
 
   if (!prompt) {
@@ -24,9 +25,11 @@ export default async function EditPromptPage({ params }: PageProps) {
   }
 
   const action = updatePrompt.bind(null, params.id);
+  const categoryIds = (promptCategories ?? []).map((item: any) => item.category_id);
   const enrichedPrompt = {
     ...prompt,
     tag_ids: (promptTags ?? []).map((item: any) => item.tag_id),
+    category_ids: categoryIds.length > 0 ? categoryIds : prompt.category_id ? [prompt.category_id] : [],
   };
 
   return (

@@ -37,7 +37,7 @@ export default async function AdminPromptsPage({ searchParams }: PageProps) {
   const published = searchParams?.published ?? "all";
 
   let query = (supabase.from("prompts") as any)
-    .select("id,title,slug,access_level,difficulty,is_published,updated_at,category_id,categories(name_fa,slug)")
+    .select("id,title,slug,access_level,difficulty,is_published,updated_at,category_id,categories(name_fa,slug),prompt_categories(categories(name_fa,slug))")
     .order("updated_at", { ascending: false });
 
   if (q) query = query.or(`title.ilike.%${q}%,slug.ilike.%${q}%`);
@@ -94,11 +94,32 @@ export default async function AdminPromptsPage({ searchParams }: PageProps) {
               </tr>
             </thead>
             <tbody>
-              {(prompts ?? []).map((prompt: any) => (
+              {(prompts ?? []).map((prompt: any) => {
+                const assignedCategories = (prompt.prompt_categories ?? [])
+                  .map((row: any) => row.categories?.name_fa)
+                  .filter(Boolean);
+                const categories = assignedCategories.length > 0 ? assignedCategories : prompt.categories?.name_fa ? [prompt.categories.name_fa] : [];
+                const visibleCategories = categories.slice(0, 2);
+                const extraCategoryCount = Math.max(categories.length - visibleCategories.length, 0);
+
+                return (
                 <tr key={prompt.id} className="border-t border-border">
                   <td className="p-3 font-bold text-text">{prompt.title}</td>
                   <td className="p-3 text-left text-text-muted" dir="ltr">{prompt.slug}</td>
-                  <td className="p-3 text-text-muted">{prompt.categories?.name_fa ?? "-"}</td>
+                  <td className="p-3 text-text-muted">
+                    <div className="flex flex-wrap gap-1.5">
+                      {visibleCategories.length > 0 ? visibleCategories.map((category: string) => (
+                        <span key={category} className="rounded-full border border-border bg-background-soft px-2 py-1 text-xs">
+                          {category}
+                        </span>
+                      )) : "-"}
+                      {extraCategoryCount > 0 ? (
+                        <span className="rounded-full border border-border bg-background-soft px-2 py-1 text-xs">
+                          +{extraCategoryCount}
+                        </span>
+                      ) : null}
+                    </div>
+                  </td>
                   <td className="p-3"><AccessBadge access={prompt.access_level} /></td>
                   <td className="p-3 text-text-muted">{difficultyLabels[prompt.difficulty] ?? prompt.difficulty}</td>
                   <td className="p-3"><StatusBadge published={prompt.is_published} /></td>
@@ -139,7 +160,8 @@ export default async function AdminPromptsPage({ searchParams }: PageProps) {
                     </div>
                   </td>
                 </tr>
-              ))}
+              );
+              })}
             </tbody>
           </table>
         </div>

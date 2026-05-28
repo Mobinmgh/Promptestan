@@ -36,7 +36,7 @@ export async function getPromptBySlug(slug: string): Promise<Prompt | null> {
 
   if (canViewPro) {
     const { data: prompt, error } = await (supabase.from("prompts") as any)
-      .select("*,categories(name_fa,slug)")
+      .select("*,categories(name_fa,slug),prompt_categories(categories(name_fa,slug))")
       .eq("slug", slug)
       .eq("is_published", true)
       .maybeSingle();
@@ -58,6 +58,10 @@ export async function getPromptBySlug(slug: string): Promise<Prompt | null> {
       console.error("getPromptBySlug tags failed", tagError.message);
     }
 
+    const assignedCategories = (prompt.prompt_categories ?? [])
+      .map((row: any) => row.categories)
+      .filter(Boolean);
+
     return formatPromptRow({
       id: prompt.id,
       slug: prompt.slug,
@@ -75,6 +79,8 @@ export async function getPromptBySlug(slug: string): Promise<Prompt | null> {
       cover_image_url: prompt.cover_image_url,
       category_name: prompt.categories?.name_fa ?? null,
       category_slug: prompt.categories?.slug ?? null,
+      category_names: assignedCategories.map((category: any) => category.name_fa).filter(Boolean),
+      category_slugs: assignedCategories.map((category: any) => category.slug).filter(Boolean),
       tags: (tagRows ?? []).map((row: any) => row.tags?.slug).filter(Boolean),
     });
   }
@@ -98,8 +104,18 @@ export async function getRelatedPrompts(slug: string): Promise<Prompt[]> {
     return prompts.slice(0, 3);
   }
 
+  const currentCategorySlugs = new Set(current.categorySlugs ?? (current.categorySlug ? [current.categorySlug] : []));
+
   return prompts
-    .filter((prompt) => prompt.slug !== slug && prompt.category === current.category)
-    .concat(prompts.filter((prompt) => prompt.slug !== slug && prompt.category !== current.category))
+    .filter((prompt) => {
+      const categorySlugs = prompt.categorySlugs ?? (prompt.categorySlug ? [prompt.categorySlug] : []);
+      return prompt.slug !== slug && categorySlugs.some((categorySlug) => currentCategorySlugs.has(categorySlug));
+    })
+    .concat(
+      prompts.filter((prompt) => {
+        const categorySlugs = prompt.categorySlugs ?? (prompt.categorySlug ? [prompt.categorySlug] : []);
+        return prompt.slug !== slug && !categorySlugs.some((categorySlug) => currentCategorySlugs.has(categorySlug));
+      }),
+    )
     .slice(0, 3);
 }

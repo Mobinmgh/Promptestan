@@ -17,6 +17,8 @@ export type PromptLikeRow = {
   cover_image_url: string | null;
   category_name?: string | null;
   category_slug?: string | null;
+  category_names?: string[] | null;
+  category_slugs?: string[] | null;
   tags?: string[] | null;
 };
 
@@ -67,13 +69,28 @@ export function parseUsageGuide(value: string | null | undefined) {
 }
 
 export function formatPromptRow(row: PromptLikeRow): Prompt {
+  const categoryNames = row.category_names?.filter(Boolean) ?? [];
+  const categorySlugs = row.category_slugs?.filter(Boolean) ?? [];
+  const categories = categoryNames
+    .map((name, index) => {
+      const slug = categorySlugs[index];
+      return slug ? { name, slug } : null;
+    })
+    .filter((item): item is { name: string; slug: string } => Boolean(item));
+  const primaryCategory =
+    categories[0] ??
+    (row.category_name && row.category_slug ? { name: row.category_name, slug: row.category_slug } : null);
+
   return {
     id: row.id,
     slug: row.slug,
     title: row.title,
     description: row.description ?? "",
-    category: row.category_name ?? "بدون دسته‌بندی",
-    categorySlug: row.category_slug ?? undefined,
+    category: primaryCategory?.name ?? row.category_name ?? "بدون دسته‌بندی",
+    categorySlug: primaryCategory?.slug ?? row.category_slug ?? undefined,
+    categories: categories.length > 0 ? categories : primaryCategory ? [primaryCategory] : [],
+    categoryNames: categoryNames.length > 0 ? categoryNames : primaryCategory ? [primaryCategory.name] : [],
+    categorySlugs: categorySlugs.length > 0 ? categorySlugs : primaryCategory ? [primaryCategory.slug] : [],
     tags: row.tags ?? [],
     access: row.access_level,
     difficulty: row.difficulty,
@@ -81,7 +98,9 @@ export function formatPromptRow(row: PromptLikeRow): Prompt {
     coverImage: row.cover_image_url || fallbackImage,
     imageAlt: row.title,
     promptText: row.prompt_text,
-    promptPreview: row.prompt_preview ?? (row.access_level === "pro" && row.prompt_text ? `${row.prompt_text.slice(0, 180)}...` : null),
+    promptPreview:
+      row.prompt_preview ??
+      (row.access_level === "pro" && row.prompt_text ? `${row.prompt_text.slice(0, 180)}...` : null),
     negativePrompt: row.negative_prompt ?? null,
     variables: parseVariables(row.variables),
     usageGuide: parseUsageGuide(row.usage_notes_fa),

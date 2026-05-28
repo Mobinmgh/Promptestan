@@ -12,6 +12,10 @@ export function PromptCard({
   isLoggedIn?: boolean;
   isSaved?: boolean;
 }) {
+  const categories = prompt.categories?.length ? prompt.categories : [{ name: prompt.category, slug: prompt.categorySlug ?? "" }];
+  const visibleCategories = categories.slice(0, 2);
+  const extraCategoryCount = Math.max(categories.length - visibleCategories.length, 0);
+
   return (
     <article className="group relative mb-6 break-inside-avoid overflow-hidden rounded-xl border border-border bg-surface transition duration-300 ease-out hover:-translate-y-1 hover:border-accent/80 hover:shadow-glow">
       <Link href={`/prompts/${prompt.slug}`} className="block focus:outline-none focus:ring-2 focus:ring-accent">
@@ -34,9 +38,16 @@ export function PromptCard({
               <div className="min-h-0 overflow-hidden">
                 <div className="grid translate-y-2 gap-3 pt-3 transition-transform duration-300 ease-out group-hover:translate-y-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="rounded-full border border-accent/35 bg-accent/20 px-2.5 py-1 text-xs text-indigo-100">
-                      {prompt.category}
-                    </span>
+                    {visibleCategories.map((category) => (
+                      <span key={`${prompt.slug}-${category.slug || category.name}`} className="rounded-full border border-accent/35 bg-accent/20 px-2.5 py-1 text-xs text-indigo-100">
+                        {category.name}
+                      </span>
+                    ))}
+                    {extraCategoryCount > 0 ? (
+                      <span className="rounded-full border border-border bg-black/35 px-2.5 py-1 text-xs text-zinc-100">
+                        +{extraCategoryCount}
+                      </span>
+                    ) : null}
                     <DifficultyBadge difficulty={prompt.difficulty} />
                   </div>
                   <p className="line-clamp-2 text-xs leading-6 text-zinc-200">{prompt.description}</p>
@@ -56,9 +67,16 @@ export function PromptCard({
 
         <div className="grid gap-3 p-3 md:hidden">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-full border border-accent/30 bg-accent/10 px-2.5 py-1 text-xs text-indigo-100">
-              {prompt.category}
-            </span>
+            {visibleCategories.map((category) => (
+              <span key={`${prompt.slug}-mobile-${category.slug || category.name}`} className="rounded-full border border-accent/30 bg-accent/10 px-2.5 py-1 text-xs text-indigo-100">
+                {category.name}
+              </span>
+            ))}
+            {extraCategoryCount > 0 ? (
+              <span className="rounded-full border border-border bg-background-soft px-2.5 py-1 text-xs text-text-muted">
+                +{extraCategoryCount}
+              </span>
+            ) : null}
             <DifficultyBadge difficulty={prompt.difficulty} />
           </div>
           <div>
