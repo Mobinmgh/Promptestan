@@ -44,7 +44,7 @@ export function HeroPromptSlider({ prompts }: { prompts: Prompt[] }) {
       onMouseLeave={() => setIsPaused(false)}
     >
       <div className="relative overflow-hidden rounded-xl bg-background-soft">
-        <div className="relative min-h-[26rem] sm:min-h-[30rem] lg:min-h-[34rem]">
+        <div className="relative aspect-[4/5] md:aspect-[5/4]">
           {slides.map((prompt, index) => {
             const isActive = index === activeIndex;
 
@@ -61,13 +61,24 @@ export function HeroPromptSlider({ prompts }: { prompts: Prompt[] }) {
                 tabIndex={isActive ? 0 : -1}
               >
                 <img
+                  aria-hidden="true"
                   src={prompt.coverImage}
-                  alt={prompt.imageAlt}
-                  className="h-full w-full object-contain"
+                  alt=""
+                  className="absolute inset-0 h-full w-full scale-125 object-cover opacity-60 blur-2xl saturate-125"
                   loading={index === 0 ? "eager" : "lazy"}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/45 to-black/5" />
-                <div className="absolute inset-x-0 bottom-0 p-5 md:p-6">
+                <div className="absolute inset-0 bg-black/35" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/40 to-black/10" />
+                <div className="absolute inset-0 flex items-center justify-center p-4 pb-28 sm:p-5 sm:pb-32 md:p-6 md:pb-36">
+                  <img
+                    src={prompt.coverImage}
+                    alt={prompt.imageAlt}
+                    className="relative z-10 max-h-full max-w-full object-contain drop-shadow-2xl"
+                    loading={index === 0 ? "eager" : "lazy"}
+                  />
+                </div>
+                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_38%,transparent_0%,rgba(0,0,0,0.2)_58%,rgba(0,0,0,0.68)_100%)]" />
+                <div className="absolute inset-x-0 bottom-0 z-20 p-5 md:p-6">
                   <div className="mb-3 flex flex-wrap items-center gap-2">
                     <AccessBadge access={prompt.access} />
                     <span className="rounded-full border border-white/15 bg-black/40 px-2.5 py-1 text-xs text-zinc-100 backdrop-blur">

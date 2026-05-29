@@ -39,7 +39,7 @@ export default async function HomePage() {
           <span className="mb-5 inline-flex rounded-full border border-accent/35 bg-accent/12 px-3 py-1.5 text-xs font-semibold text-indigo-100">
             گالری حرفه‌ای پرامپت تصویر
           </span>
-          <h1 className="max-w-3xl text-4xl font-black leading-[1.35] text-text md:text-5xl">
+          <h1 className="max-w-3xl text-4xl font-black leading-[1.45] text-text md:text-5xl md:leading-[1.4]">
             پرامپت‌های آماده برای ساخت تصاویر حرفه‌ای با هوش مصنوعی
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-8 text-text-muted md:text-lg">
